@@ -1,0 +1,547 @@
+{
+  "common_cold": {
+    "symptoms": ["cough", "sneezing", "runny nose", "sore throat", "fatigue"],
+    "advice": "Rest, drink fluids, and take paracetamol if needed.",
+    "severity": "low"
+  },
+  "malaria": {
+    "symptoms": ["high fever", "chills", "sweating", "headache", "body aches"],
+    "advice": "Consult a doctor immediately and get a blood test.",
+    "severity": "high"
+  },
+  "flu": {
+    "symptoms": ["fever", "cough", "body aches", "fatigue", "headache"],
+    "advice": "Rest, drink fluids, antiviral medications may help if taken early.",
+    "severity": "medium"
+  },
+  "covid_19": {
+    "symptoms": ["fever", "cough", "fatigue", "loss of taste or smell", "difficulty breathing"],
+    "advice": "Get tested, isolate, monitor symptoms, contact healthcare provider if worsening.",
+    "severity": "high"
+  },
+  "tuberculosis": {
+    "symptoms": ["persistent cough for 3+ weeks", "chest pain", "coughing up blood", "fever", "night sweats"],
+    "advice": "See a doctor immediately for TB testing and chest X-ray.",
+    "severity": "high"
+  },
+  "pneumonia": {
+    "symptoms": ["cough", "fever", "chills", "difficulty breathing", "chest pain"],
+    "advice": "Consult a doctor for chest X-ray, may require antibiotics.",
+    "severity": "high"
+  },
+  "asthma": {
+    "symptoms": ["shortness of breath", "chest tightness", "wheezing", "coughing at night"],
+    "advice": "Use inhaler as prescribed, avoid triggers, see doctor if worsening.",
+    "severity": "medium"
+  },
+  "diabetes_type_1": {
+    "symptoms": ["increased thirst", "frequent urination", "fatigue", "irritability", "fruity-smelling breath"],
+    "advice": "Consult an endocrinologist for insulin therapy and blood glucose monitoring.",
+    "severity": "high"
+  },
+  "diabetes_type_2": {
+    "symptoms": ["increased thirst", "frequent urination", "fatigue", "blurred vision", "slow wound healing"],
+    "advice": "Manage with diet, exercise, and medications; monitor blood glucose regularly.",
+    "severity": "medium"
+  },
+  "hypertension": {
+    "symptoms": ["headaches", "shortness of breath", "chest discomfort", "vision problems"],
+    "advice": "Monitor blood pressure, reduce sodium intake, exercise, consult doctor for medication.",
+    "severity": "high"
+  },
+  "migraine": {
+    "symptoms": ["severe headache", "nausea", "vomiting", "sensitivity to light", "visual disturbances"],
+    "advice": "Rest in a dark room, apply cold compress, take pain relief medication.",
+    "severity": "medium"
+  },
+  "anxiety_disorder": {
+    "symptoms": ["excessive worry", "restlessness", "irritability", "sleep disturbance", "fatigue"],
+    "advice": "Practice relaxation techniques, seek therapy, consult doctor if severe.",
+    "severity": "medium"
+  },
+  "depression": {
+    "symptoms": ["persistent sadness", "loss of interest", "sleep changes", "fatigue", "difficulty concentrating"],
+    "advice": "Consult a mental health professional, therapy and medication may help.",
+    "severity": "high"
+  },
+  "gastroenteritis": {
+    "symptoms": ["nausea", "vomiting", "diarrhea", "abdominal cramps", "fever"],
+    "advice": "Rest, drink oral rehydration solution, avoid solid foods initially.",
+    "severity": "medium"
+  },
+  "irritable_bowel_syndrome": {
+    "symptoms": ["abdominal pain", "diarrhea or constipation", "bloating", "mucus in stool"],
+    "advice": "Manage with diet changes, stress reduction, consult gastroenterologist.",
+    "severity": "medium"
+  },
+  "ulcer": {
+    "symptoms": ["burning stomach pain", "bloating", "heartburn", "nausea", "dark stools"],
+    "advice": "Consult doctor for proton pump inhibitors, avoid spicy foods.",
+    "severity": "medium"
+  },
+  "arthritis": {
+    "symptoms": ["joint pain", "stiffness", "swelling", "reduced range of motion"],
+    "advice": "Physical therapy, pain management, anti-inflammatory medications.",
+    "severity": "medium"
+  },
+  "osteoporosis": {
+    "symptoms": ["no symptoms in early stages", "back pain", "loss of height", "stooped posture"],
+    "advice": "Increase calcium intake, exercise, get bone density test.",
+    "severity": "medium"
+  },
+  "anemia": {
+    "symptoms": ["fatigue", "weakness", "shortness of breath", "dizziness", "pale skin"],
+    "advice": "Get blood tests, increase iron-rich foods, may need supplements.",
+    "severity": "medium"
+  },
+  "thyroid_disease": {
+    "symptoms": ["weight changes", "fatigue", "mood changes", "temperature sensitivity"],
+    "advice": "Get thyroid function tests (TSH), consult endocrinologist.",
+    "severity": "medium"
+  },
+  "eczema": {
+    "symptoms": ["itchy skin", "dry patches", "rashes", "skin inflammation", "sensitivity"],
+    "advice": "Moisturize regularly, avoid triggers, use prescribed creams.",
+    "severity": "low"
+  },
+  "psoriasis": {
+    "symptoms": ["red patches", "white scales", "itching", "burning sensation", "thickened nails"],
+    "advice": "Dermatologist consultation, topical treatments, avoid triggers.",
+    "severity": "medium"
+  },
+  "acne": {
+    "symptoms": ["pimples", "blackheads", "whiteheads", "oily skin", "scars"],
+    "advice": "Cleanse regularly, use acne medication, consult dermatologist if severe.",
+    "severity": "low"
+  },
+  "urinary_tract_infection": {
+    "symptoms": ["burning urination", "frequent urination", "urgency", "cloudy urine", "pelvic pain"],
+    "advice": "Drink plenty of water, consult doctor for antibiotics.",
+    "severity": "medium"
+  },
+  "kidney_stones": {
+    "symptoms": ["severe back pain", "painful urination", "nausea", "blood in urine"],
+    "advice": "Stay hydrated, pain management, consult urologist.",
+    "severity": "high"
+  },
+  "liver_disease": {
+    "symptoms": ["jaundice", "abdominal pain", "fatigue", "dark urine", "pale stools"],
+    "advice": "Consult hepatologist, liver function tests, avoid alcohol.",
+    "severity": "high"
+  },
+  "heart_disease": {
+    "symptoms": ["chest pain", "shortness of breath", "fatigue", "irregular heartbeat"],
+    "advice": "Seek emergency care immediately, get ECG and blood tests.",
+    "severity": "high"
+  },
+  "stroke": {
+    "symptoms": ["sudden weakness on one side", "facial drooping", "speech difficulty", "vision problems"],
+    "advice": "Call emergency services immediately, time is critical.",
+    "severity": "high"
+  },
+  "cancer": {
+    "symptoms": ["unexplained weight loss", "persistent pain", "unusual bleeding", "lumps"],
+    "advice": "Consult oncologist immediately, get imaging and biopsy.",
+    "severity": "high"
+  },
+  "celiac_disease": {
+    "symptoms": ["abdominal bloating", "diarrhea", "fatigue", "weight loss", "anemia"],
+    "advice": "Follow gluten-free diet, consult gastroenterologist.",
+    "severity": "medium"
+  },
+  "lactose_intolerance": {
+    "symptoms": ["bloating", "diarrhea", "stomach cramps", "gas", "nausea after dairy"],
+    "advice": "Avoid dairy products or use lactase enzyme supplements.",
+    "severity": "low"
+  },
+  "food_allergy": {
+    "symptoms": ["itching in mouth", "swelling", "hives", "difficulty breathing", "anaphylaxis in severe cases"],
+    "advice": "Identify and avoid allergen, carry epinephrine auto-injector if severe.",
+    "severity": "high"
+  },
+  "hayfever": {
+    "symptoms": ["sneezing", "nasal congestion", "itchy eyes", "runny nose"],
+    "advice": "Use antihistamines, nasal sprays, avoid allergen exposure.",
+    "severity": "low"
+  },
+  "asthma_allergy_related": {
+    "symptoms": ["wheezing", "shortness of breath", "chest tightness", "coughing"],
+    "advice": "Use bronchodilator inhalers, avoid triggers, consult doctor.",
+    "severity": "medium"
+  },
+  "whooping_cough": {
+    "symptoms": ["severe coughing fits", "whooping sound", "vomiting after cough", "fever"],
+    "advice": "Consult doctor for antibiotics, ensure vaccination.",
+    "severity": "high"
+  },
+  "measles": {
+    "symptoms": ["fever", "cough", "runny nose", "Koplik spots", "red rash"],
+    "advice": "Isolate, rest, supportive care, ensure vaccination.",
+    "severity": "high"
+  },
+  "mumps": {
+    "symptoms": ["fever", "chills", "swollen salivary glands", "pain while eating"],
+    "advice": "Rest, pain management, ensure vaccination.",
+    "severity": "medium"
+  },
+  "chickenpox": {
+    "symptoms": ["itchy rash", "fluid-filled blisters", "fever", "fatigue"],
+    "advice": "Calamine lotion for itching, rest, pain relief, ensure vaccination.",
+    "severity": "medium"
+  },
+  "shingles": {
+    "symptoms": ["severe pain", "rash with blisters", "burning sensation", "itching"],
+    "advice": "Consult doctor for antiviral medication, pain management.",
+    "severity": "medium"
+  },
+  "bronchitis": {
+    "symptoms": ["persistent cough", "mucus production", "fatigue", "shortness of breath"],
+    "advice": "Rest, fluids, cough suppressants, consult doctor.",
+    "severity": "medium"
+  },
+  "pharyngitis": {
+    "symptoms": ["sore throat", "difficulty swallowing", "fever", "red throat"],
+    "advice": "Rest, warm beverages, throat lozenges, antibiotics if bacterial.",
+    "severity": "low"
+  },
+  "sinusitis": {
+    "symptoms": ["nasal congestion", "facial pain", "headache", "thick nasal discharge"],
+    "advice": "Nasal saline rinse, decongestants, antibiotics if bacterial.",
+    "severity": "low"
+  },
+  "otitis_media": {
+    "symptoms": ["ear pain", "fever", "hearing loss", "fluid drainage"],
+    "advice": "Pain relief, warm compress, consult doctor for antibiotics.",
+    "severity": "medium"
+  },
+  "conjunctivitis": {
+    "symptoms": ["red eyes", "itching", "discharge", "light sensitivity"],
+    "advice": "Warm compress, eye drops, proper hygiene, consult doctor.",
+    "severity": "low"
+  },
+  "glaucoma": {
+    "symptoms": ["no symptoms initially", "gradually blurred vision", "eye pain", "seeing halos"],
+    "advice": "Regular eye exams, medicated eye drops, consult ophthalmologist.",
+    "severity": "high"
+  },
+  "cataracts": {
+    "symptoms": ["cloudy lens", "blurred vision", "difficulty seeing at night"],
+    "advice": "Consult ophthalmologist for surgery if vision significantly affected.",
+    "severity": "medium"
+  },
+  "macular_degeneration": {
+    "symptoms": ["blurred central vision", "difficulty reading", "distorted vision"],
+    "advice": "Consult ophthalmologist, vitamin supplementation may help.",
+    "severity": "medium"
+  },
+  "diabetic_retinopathy": {
+    "symptoms": ["blurred vision", "floaters", "vision loss", "no symptoms early"],
+    "advice": "Manage diabetes tightly, regular eye exams, consult ophthalmologist.",
+    "severity": "high"
+  },
+  "vertigo": {
+    "symptoms": ["spinning sensation", "dizziness", "nausea", "balance problems"],
+    "advice": "Rest, avoid sudden movements, consult doctor.",
+    "severity": "medium"
+  },
+  "Meniere_disease": {
+    "symptoms": ["vertigo", "tinnitus", "hearing loss", "ear fullness"],
+    "advice": "Reduce salt intake, consult ENT specialist.",
+    "severity": "medium"
+  },
+  "tinnitus": {
+    "symptoms": ["ringing in ears", "buzzing", "humming", "roaring sounds"],
+    "advice": "Identify triggers, white noise, consult audiologist.",
+    "severity": "low"
+  },
+  "hearing_loss": {
+    "symptoms": ["difficulty hearing", "muffled sounds", "difficulty in conversations"],
+    "advice": "Get audiogram, hearing aids or cochlear implants, consult audiologist.",
+    "severity": "medium"
+  },
+  "osteoarthritis": {
+    "symptoms": ["joint pain", "stiffness", "reduced mobility", "swelling"],
+    "advice": "Physical therapy, pain management, weight management.",
+    "severity": "medium"
+  },
+  "rheumatoid_arthritis": {
+    "symptoms": ["joint pain", "swelling", "fever", "fatigue", "morning stiffness"],
+    "advice": "Consult rheumatologist for disease-modifying drugs.",
+    "severity": "high"
+  },
+  "gout": {
+    "symptoms": ["severe joint pain", "swelling", "redness", "warmth in affected area"],
+    "advice": "Rest, ice, pain relief, reduce purine intake, consult doctor.",
+    "severity": "medium"
+  },
+  "lupus": {
+    "symptoms": ["butterfly rash", "joint pain", "fatigue", "chest pain", "photosensitivity"],
+    "advice": "Consult rheumatologist, immunosuppressive medications.",
+    "severity": "high"
+  },
+  "fibromyalgia": {
+    "symptoms": ["widespread muscle pain", "fatigue", "sleep problems", "cognitive difficulties"],
+    "advice": "Exercise, pain management, stress reduction, consult specialist.",
+    "severity": "medium"
+  },
+  "chronic_fatigue_syndrome": {
+    "symptoms": ["extreme fatigue", "post-exertion exhaustion", "sleep problems", "cognitive issues"],
+    "advice": "Rest, graded exercise, cognitive behavioral therapy.",
+    "severity": "medium"
+  },
+  "sciatica": {
+    "symptoms": ["lower back pain", "pain down leg", "numbness", "tingling"],
+    "advice": "Physical therapy, pain relief, stretching exercises.",
+    "severity": "medium"
+  },
+  "herniated_disc": {
+    "symptoms": ["back pain", "leg pain", "numbness", "weakness"],
+    "advice": "Rest, physical therapy, consult orthopedic surgeon.",
+    "severity": "medium"
+  },
+  "scoliosis": {
+    "symptoms": ["curved spine", "uneven shoulders", "back pain"],
+    "advice": "Back brace or surgery depending on severity, physical therapy.",
+    "severity": "medium"
+  },
+  "osteoporosis_fracture": {
+    "symptoms": ["sudden severe pain", "visible deformity", "immobility"],
+    "advice": "Immobilize, pain management, orthopedic consultation.",
+    "severity": "high"
+  },
+  "carpal_tunnel_syndrome": {
+    "symptoms": ["wrist pain", "numbness in fingers", "tingling", "weakness"],
+    "advice": "Wrist brace, rest, anti-inflammatory medication, surgery if severe.",
+    "severity": "medium"
+  },
+  "tennis_elbow": {
+    "symptoms": ["outer elbow pain", "weakness", "difficulty gripping"],
+    "advice": "Rest, ice, physical therapy, anti-inflammatory medication.",
+    "severity": "low"
+  },
+  "rotator_cuff_injury": {
+    "symptoms": ["shoulder pain", "weakness", "difficulty raising arm"],
+    "advice": "Rest, physical therapy, anti-inflammatory medication.",
+    "severity": "medium"
+  },
+  "frozen_shoulder": {
+    "symptoms": ["shoulder stiffness", "pain", "reduced range of motion"],
+    "advice": "Physical therapy, gentle stretching, heat therapy.",
+    "severity": "medium"
+  },
+  "plantar_fasciitis": {
+    "symptoms": ["heel pain", "pain with first steps", "arch pain"],
+    "advice": "Stretching, night splints, ice, proper footwear.",
+    "severity": "low"
+  },
+  "bunions": {
+    "symptoms": ["bony bump at big toe base", "pain", "swelling"],
+    "advice": "Proper footwear, toe exercises, surgery if severe.",
+    "severity": "low"
+  },
+  "varicose_veins": {
+    "symptoms": ["visible veins", "leg pain", "swelling", "skin changes"],
+    "advice": "Compression stockings, leg elevation, consult vascular surgeon.",
+    "severity": "low"
+  },
+  "deep_vein_thrombosis": {
+    "symptoms": ["leg swelling", "pain", "warmth", "redness"],
+    "advice": "Seek emergency care immediately, get ultrasound.",
+    "severity": "high"
+  },
+  "pulmonary_embolism": {
+    "symptoms": ["sudden shortness of breath", "chest pain", "rapid heartbeat"],
+    "advice": "Call emergency services immediately.",
+    "severity": "high"
+  },
+  "arrhythmia": {
+    "symptoms": ["irregular heartbeat", "palpitations", "shortness of breath", "fainting"],
+    "advice": "Consult cardiologist, ECG monitoring, may need medication.",
+    "severity": "high"
+  },
+  "angina": {
+    "symptoms": ["chest pain or pressure", "shortness of breath", "pain in shoulders or arms"],
+    "advice": "Rest, take nitroglycerine if prescribed, seek medical attention.",
+    "severity": "high"
+  },
+  "myocardial_infarction": {
+    "symptoms": ["severe chest pain", "shortness of breath", "pain radiating to arm", "sweating"],
+    "advice": "Call emergency services immediately.",
+    "severity": "high"
+  },
+  "hemophilia": {
+    "symptoms": ["excessive bleeding", "bruising", "joint pain", "spontaneous bleeding"],
+    "advice": "Consult hematologist, clotting factor replacement therapy.",
+    "severity": "high"
+  },
+  "sickle_cell_disease": {
+    "symptoms": ["severe pain episodes", "swelling", "fatigue", "jaundice"],
+    "advice": "Pain management, hydration, consult hematologist.",
+    "severity": "high"
+  },
+  "thalassemia": {
+    "symptoms": ["fatigue", "weakness", "pale skin", "bone deformities"],
+    "advice": "Blood transfusions, iron chelation therapy, consult hematologist.",
+    "severity": "high"
+  },
+  "bipolar_disorder": {
+    "symptoms": ["extreme mood swings", "manic episodes", "depressive episodes", "racing thoughts", "impulsive behavior"],
+    "advice": "Consult psychiatrist for mood stabilizers, therapy, regular mood monitoring.",
+    "severity": "high"
+  },
+  "schizophrenia": {
+    "symptoms": ["hallucinations", "delusions", "disorganized speech", "withdrawn behavior", "reduced emotional expression"],
+    "advice": "Consult psychiatrist immediately, antipsychotic medications, hospitalization if acute.",
+    "severity": "high"
+  },
+  "ocd": {
+    "symptoms": ["obsessive thoughts", "compulsive behaviors", "fear of contamination", "need for order", "anxiety"],
+    "advice": "Cognitive behavioral therapy, SSRIs, consult psychiatrist.",
+    "severity": "medium"
+  },
+  "ptsd": {
+    "symptoms": ["intrusive memories", "nightmares", "flashbacks", "hypervigilance", "avoidance behavior"],
+    "advice": "Trauma-focused CBT, EMDR therapy, consult mental health professional.",
+    "severity": "high"
+  },
+  "generalized_anxiety_disorder": {
+    "symptoms": ["excessive worry", "restlessness", "muscle tension", "difficulty concentrating", "sleep problems"],
+    "advice": "Cognitive behavioral therapy, relaxation techniques, medication if needed.",
+    "severity": "medium"
+  },
+  "panic_disorder": {
+    "symptoms": ["sudden panic attacks", "chest pain", "palpitations", "shortness of breath", "fear of dying"],
+    "advice": "Breathing exercises, CBT, medication, avoid triggers.",
+    "severity": "high"
+  },
+  "social_anxiety_disorder": {
+    "symptoms": ["fear of social situations", "blushing", "trembling", "excessive sweating", "avoidance of crowds"],
+    "advice": "Cognitive behavioral therapy, exposure therapy, medication.",
+    "severity": "medium"
+  },
+  "specific_phobia": {
+    "symptoms": ["intense irrational fear", "panic attacks", "avoidance behavior", "physical symptoms when exposed"],
+    "advice": "Exposure therapy, cognitive behavioral therapy, relaxation techniques.",
+    "severity": "low"
+  },
+  "anorexia_nervosa": {
+    "symptoms": ["severe food restriction", "extreme weight loss", "preoccupation with weight", "distorted body image", "excessive exercise"],
+    "advice": "Consult eating disorder specialist, nutritionist, psychiatrist, possible hospitalization.",
+    "severity": "high"
+  },
+  "bulimia_nervosa": {
+    "symptoms": ["binge eating episodes", "purging behaviors", "weight fluctuations", "dental problems", "sore throat"],
+    "advice": "Cognitive behavioral therapy, nutritionist support, consult psychiatrist.",
+    "severity": "high"
+  },
+  "binge_eating_disorder": {
+    "symptoms": ["recurrent binge eating", "loss of control", "rapid eating", "eating until uncomfortable", "shame"],
+    "advice": "Behavioral therapy, nutritionist, support groups, avoid diet culture.",
+    "severity": "medium"
+  },
+  "adhd": {
+    "symptoms": ["inattention", "hyperactivity", "impulsivity", "difficulty organizing", "forgetfulness"],
+    "advice": "Stimulant medications, behavioral therapy, structured routines.",
+    "severity": "medium"
+  },
+  "autism_spectrum_disorder": {
+    "symptoms": ["difficulty with social interaction", "repetitive behaviors", "sensory sensitivities", "focused interests", "communication challenges"],
+    "advice": "Speech therapy, behavioral support, accommodations, consult developmental specialist.",
+    "severity": "medium"
+  },
+  "seasonal_affective_disorder": {
+    "symptoms": ["depression during winter", "low energy", "social withdrawal", "sleep changes", "weight gain"],
+    "advice": "Light therapy, vitamin D supplements, outdoor exposure, therapy.",
+    "severity": "medium"
+  },
+  "insomnia": {
+    "symptoms": ["difficulty falling asleep", "frequent wakings", "early morning awakening", "daytime fatigue", "irritability"],
+    "advice": "Sleep hygiene improvements, cognitive behavioral therapy for insomnia, relaxation techniques.",
+    "severity": "medium"
+  },
+  "sleep_apnea": {
+    "symptoms": ["loud snoring", "pauses in breathing", "daytime fatigue", "morning headaches", "choking sensation"],
+    "advice": "Sleep study, CPAP machine, weight management, consult sleep specialist.",
+    "severity": "high"
+  },
+  "substance_use_disorder": {
+    "symptoms": ["cravings", "tolerance", "withdrawal symptoms", "continued use despite harm", "neglecting responsibilities"],
+    "advice": "Rehab programs, support groups (AA, NA), counseling, medication-assisted treatment.",
+    "severity": "high"
+  },
+  "burnout": {
+    "symptoms": ["emotional exhaustion", "cynicism", "reduced work performance", "detachment", "physical symptoms"],
+    "advice": "Take breaks, set boundaries, seek counseling, lifestyle changes.",
+    "severity": "medium"
+  },
+  "borderline_personality_disorder": {
+    "symptoms": ["intense fear of abandonment", "unstable relationships", "impulsive behavior", "emotional instability", "self-harm"],
+    "advice": "Dialectical behavior therapy, psychiatry consultation, support groups.",
+    "severity": "high"
+  },
+  "narcissistic_personality_disorder": {
+    "symptoms": ["excessive need for admiration", "lack of empathy", "manipulative behavior", "sense of entitlement", "rage"],
+    "advice": "Individual therapy difficult, group therapy, consult mental health professional.",
+    "severity": "medium"
+  },
+  "antisocial_personality_disorder": {
+    "symptoms": ["lack of remorse", "manipulative behavior", "aggression", "deceitfulness", "rule violation"],
+    "advice": "Legal/court-ordered therapy, behavioral programs, structured environment.",
+    "severity": "high"
+  },
+  "dissociative_identity_disorder": {
+    "symptoms": ["multiple distinct identities", "memory gaps", "depersonalization", "derealization", "lost time"],
+    "advice": "Trauma-focused therapy, psychiatry consultation, safe environment.",
+    "severity": "high"
+  },
+  "adjustment_disorder": {
+    "symptoms": ["difficulty coping with change", "anxiety", "depression", "behavioral problems", "emotional distress"],
+    "advice": "Therapy, support groups, stress management, time and support.",
+    "severity": "medium"
+  },
+  "prolonged_grief_disorder": {
+    "symptoms": ["intense grief after loss", "difficulty accepting death", "yearning for deceased", "identity confusion", "loss of purpose"],
+    "advice": "Grief counseling, support groups, therapy, allow time to process.",
+    "severity": "medium"
+  },
+  "complicated_grief": {
+    "symptoms": ["overwhelming grief", "suicidal thoughts", "inability to function", "persistent denial", "anger"],
+    "advice": "Bereavement therapy, psychiatry consultation, support networks.",
+    "severity": "high"
+  },
+  "stress_disorder": {
+    "symptoms": ["excessive stress", "anxiety", "tension headaches", "muscle tension", "irritability"],
+    "advice": "Stress management, meditation, exercise, therapy.",
+    "severity": "medium"
+  },
+  "major_depressive_episode": {
+    "symptoms": ["persistent sadness", "anhedonia", "sleep changes", "guilt feelings", "suicidal thoughts"],
+    "advice": "Antidepressants, psychotherapy, crisis hotline if suicidal.",
+    "severity": "high"
+  },
+  "persistent_depressive_disorder": {
+    "symptoms": ["chronic low mood", "hopelessness", "low energy", "poor self-image", "difficulty concentrating"],
+    "advice": "Long-term antidepressants, psychotherapy, lifestyle changes.",
+    "severity": "high"
+  },
+  "bipolar_depression": {
+    "symptoms": ["severe low mood", "suicidal ideation", "fatigue", "loss of interest", "hopelessness"],
+    "advice": "Mood stabilizers, antidepressants, psychiatry consultation, hospitalization if acute.",
+    "severity": "high"
+  },
+  "perinatal_depression": {
+    "symptoms": ["depression during pregnancy", "postpartum sadness", "anxiety", "difficulty bonding", "suicidal thoughts"],
+    "advice": "Consult OB-GYN and psychiatrist, safe medications during pregnancy, support groups.",
+    "severity": "high"
+  },
+  "premenstrual_dysphoric_disorder": {
+    "symptoms": ["severe mood changes before period", "depression", "anxiety", "irritability", "fatigue"],
+    "advice": "Hormonal contraceptives, SSRIs, lifestyle changes, track symptoms.",
+    "severity": "medium"
+  },
+  "anxiety_in_elderly": {
+    "symptoms": ["excessive worry", "physical tension", "restlessness", "difficulty sleeping", "cognitive concerns"],
+    "advice": "Low-dose anxiety medications, therapy, address medical issues, maintain activity.",
+    "severity": "medium"
+  }
+}
