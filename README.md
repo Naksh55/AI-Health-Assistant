@@ -19,8 +19,6 @@ health conditions.
 - `Main.py` - core chatbot logic
 - `diseases.json` - structured database of diseases, symptoms, advice, severity
 - `test_chatbot.py` - general symptom matching tests
-- `test_mental_health.py` - tests focusing on mental health conditions
-
 ## Usage
 
 1. Install dependencies (e.g., `pip install nltk`).
