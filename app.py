@@ -161,11 +161,6 @@ html, body, [class*="css"] {
 st.markdown("""
 <div class="main-header">
     <h1>🏥 AI Health Assistant</h1>
-    <p>Powered by multi-agent AI · LangGraph + LangChain + Claude</p>
-</div>
-<div class="disclaimer-banner">
-    ⚠️ For informational purposes only · Not a substitute for professional medical advice
-</div>
 """, unsafe_allow_html=True)
 
 
