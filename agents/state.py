@@ -35,3 +35,9 @@ class HealthAgentState(TypedDict):
     final_response: Optional[str]
     error: Optional[bool]
     error_message: Optional[str]
+
+    #fields for report analysis
+    report_data: Optional[str]        # base64 encoded file OR extracted text
+    report_type: Optional[str]        # "pdf", "image", or "text"
+    report_analysis: Optional[dict]   # structured findings from report agent
+    has_report: Optional[bool]        # flag to trigger report node

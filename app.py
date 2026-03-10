@@ -1,54 +1,40 @@
 """
-app.py — Streamlit Chat UI
-===========================
-The frontend for the AI Health Assistant.
-Uses Streamlit's chat components to create a conversational interface.
-
-HOW STREAMLIT WORKS WITH LANGGRAPH:
-  - Streamlit re-runs the entire script top-to-bottom on every user interaction
-  - st.session_state persists data (like chat history) across reruns
-  - When user submits a message, we call health_graph.invoke(state) which
-    runs the full LangGraph pipeline and returns the final state
+app.py — Streamlit Chat UI (Complete Corrected Version)
 """
 
-import streamlit as st
-from agents.graph import health_graph
-from langchain_groq import ChatGroq
+# ── MUST BE FIRST — load .env before anything else ────────────────────────────
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
-llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
 
-
-# LangSmith tracing — set env vars explicitly before any langchain imports
-os.environ["LANGSMITH_TRACING"] = "true"
+# ── LangSmith Tracing — set BEFORE importing langchain/langgraph ──────────────
+os.environ["LANGSMITH_TRACING"]  = "true"
 os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGSMITH_API_KEY"] = os.getenv("LANGSMITH_API_KEY", "")
-os.environ["LANGSMITH_PROJECT"] = "AI Health Assistant"
+os.environ["LANGSMITH_API_KEY"]  = os.getenv("LANGSMITH_API_KEY", "")
+os.environ["LANGSMITH_PROJECT"]  = "AI Health Assistant"
 
-# ── Page Config ───────────────────────────────────────────────────────────────
+import base64
+import io
+import streamlit as st
+import PyPDF2
+from agents.graph import health_graph
+
 st.set_page_config(
     page_title="AI Health Assistant",
     page_icon="🏥",
     layout="centered",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# ── Custom CSS ─────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
-
-/* Global */
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-}
-
-/* App background */
+html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
 .stApp {
     background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 50%, #0f1923 100%);
     min-height: 100vh;
 }
-
-/* Header */
 .main-header {
     text-align: center;
     padding: 2rem 0 1.5rem;
@@ -63,14 +49,7 @@ html, body, [class*="css"] {
     margin: 0;
     letter-spacing: -0.5px;
 }
-.main-header p {
-    color: #7ab8a8;
-    font-size: 0.95rem;
-    margin: 0.4rem 0 0;
-    font-weight: 300;
-}
-
-/* Disclaimer banner */
+.main-header p { color: #7ab8a8; font-size: 0.95rem; margin: 0.4rem 0 0; font-weight: 300; }
 .disclaimer-banner {
     background: rgba(255, 180, 50, 0.08);
     border: 1px solid rgba(255, 180, 50, 0.3);
@@ -81,8 +60,6 @@ html, body, [class*="css"] {
     text-align: center;
     margin-bottom: 1.5rem;
 }
-
-/* Risk level badges */
 .risk-badge {
     display: inline-block;
     padding: 0.3rem 0.9rem;
@@ -97,15 +74,6 @@ html, body, [class*="css"] {
 .risk-HIGH      { background: #ff7700; color: white; }
 .risk-MEDIUM    { background: #ddaa00; color: #1a1a1a; }
 .risk-LOW       { background: #33aa66; color: white; }
-
-/* Pipeline details card */
-.pipeline-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(100,200,180,0.15);
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
-    margin-top: 0.5rem;
-}
 .pipeline-label {
     color: #7ab8a8;
     font-size: 0.78rem;
@@ -133,159 +101,211 @@ html, body, [class*="css"] {
     font-size: 0.85rem;
     color: #d0e8e0;
 }
-
-/* Chat messages */
-[data-testid="stChatMessage"] {
-    background: transparent !important;
+.report-badge {
+    background: rgba(100, 180, 255, 0.12);
+    border: 1px solid rgba(100, 180, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    color: #90c8ff;
+    font-size: 0.82rem;
+    margin-bottom: 0.5rem;
 }
-
-/* Input box */
+[data-testid="stChatMessage"] { background: transparent !important; }
 [data-testid="stChatInput"] > div {
     background: rgba(255,255,255,0.06) !important;
     border: 1px solid rgba(100,200,180,0.3) !important;
     border-radius: 12px !important;
 }
-[data-testid="stChatInput"] textarea {
-    color: #e0f0ec !important;
-}
-
-/* Scrollbar */
+[data-testid="stChatInput"] textarea { color: #e0f0ec !important; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(100,200,180,0.3); border-radius: 3px; }
 </style>
 """, unsafe_allow_html=True)
 
-
-# ── Header ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="main-header">
     <h1>🏥 AI Health Assistant</h1>
+    <p>Powered by multi-agent AI · LangGraph + LangChain + Groq</p>
+</div>
+<div class="disclaimer-banner">
+    ⚠️ For informational purposes only · Not a substitute for professional medical advice
+</div>
 """, unsafe_allow_html=True)
 
+# ── Sidebar ───────────────────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("## 📋 Upload Medical Report")
+    st.caption("Upload a blood test, scan report, prescription, or any medical document.")
 
-# ── Session State ──────────────────────────────────────────────────────────────
+    uploaded_file = st.file_uploader(
+        "Choose a file",
+        type=["pdf", "jpg", "jpeg", "png"],
+        help="Supported: PDF, JPG, PNG"
+    )
+
+    if uploaded_file:
+        st.success(f"✅ **{uploaded_file.name}** ready")
+        st.caption("This report will be analyzed with your next message.")
+        if uploaded_file.type.startswith("image"):
+            st.image(uploaded_file, caption="Uploaded Report", use_column_width=True)
+
+    st.markdown("---")
+    st.markdown("## 💬 How to Use")
+    st.markdown("""
+1. **Option A:** Type your symptoms in the chat
+2. **Option B:** Upload a report + ask about it
+3. **Option C:** Do both together
+""")
+    st.markdown("---")
+    st.caption("🔒 Your data is not stored permanently.")
+
+
+# ── Helper: Process File ──────────────────────────────────────────────────────
+def process_uploaded_file(file):
+    if file is None:
+        return None, None
+    try:
+        if "pdf" in file.type:
+            file.seek(0)
+            pdf_reader = PyPDF2.PdfReader(io.BytesIO(file.read()))
+            text = ""
+            for page in pdf_reader.pages:
+                extracted = page.extract_text()
+                if extracted:
+                    text += extracted + "\n"
+            if text.strip():
+                return text.strip(), "pdf"
+            file.seek(0)
+            return base64.b64encode(file.read()).decode(), "pdf"
+        elif "image" in file.type:
+            file.seek(0)
+            return base64.b64encode(file.read()).decode(), "image"
+    except Exception as e:
+        st.error(f"Could not process file: {e}")
+    return None, None
+
+
+# ── Helper: Render Pipeline Expander ─────────────────────────────────────────
+def render_pipeline_expander(meta: dict):
+    if not meta or meta.get("error"):
+        return
+    with st.expander("🔬 View Agent Pipeline Analysis", expanded=False):
+
+        # Report section
+        report = meta.get("report_analysis")
+        if report:
+            st.markdown('<div class="pipeline-label">📋 Report Analysis</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="report-badge">'
+                f'<strong>{report.get("report_type", "Medical Report")}</strong> · '
+                f'Urgency: <strong>{report.get("urgency_level", "ROUTINE")}</strong>'
+                f'</div>', unsafe_allow_html=True
+            )
+            abnormal = report.get("abnormal_findings", [])
+            if abnormal:
+                st.markdown(f'⚠️ **Abnormal:** {", ".join(abnormal)}')
+            st.markdown("---")
+
+        risk  = meta.get("risk", {})
+        level = risk.get("risk_level", "MEDIUM")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown('<div class="pipeline-label">🔎 Extracted Symptoms</div>', unsafe_allow_html=True)
+            raw = meta.get("raw_symptoms", [])
+            chips = "".join([f'<span class="symptom-chip">{s}</span>' for s in raw]) if raw else "<span style='color:#666'>None</span>"
+            st.markdown(f'<div>{chips}</div>', unsafe_allow_html=True)
+
+            st.markdown('<br><div class="pipeline-label">🏥 Normalized Terms</div>', unsafe_allow_html=True)
+            norm = meta.get("normalized_symptoms", [])
+            chips2 = "".join([f'<span class="symptom-chip">{s}</span>' for s in norm]) if norm else "<span style='color:#666'>None</span>"
+            st.markdown(f'<div>{chips2}</div>', unsafe_allow_html=True)
+
+        with col2:
+            st.markdown('<div class="pipeline-label">🦠 Predicted Conditions</div>', unsafe_allow_html=True)
+            for c in meta.get("conditions", []):
+                prob_color = {"High": "#ff7777", "Medium": "#ffcc44", "Low": "#77cc88"}.get(c.get("probability", ""), "#aaa")
+                st.markdown(
+                    f'<div class="condition-item"><strong>{c.get("name","")}</strong> '
+                    f'<span style="color:{prob_color};font-size:0.78rem;">({c.get("probability","")})</span></div>',
+                    unsafe_allow_html=True
+                )
+
+        st.markdown("---")
+        st.markdown(f'<span class="risk-badge risk-{level}">⚡ {level} Risk</span>', unsafe_allow_html=True)
+        st.markdown(f'<span style="color:#aaa;font-size:0.85rem;">{risk.get("reason","")}</span>', unsafe_allow_html=True)
+        st.markdown(f'<br><strong style="color:#e0f0ec;">Action:</strong> <span style="color:#b0d8cc;">{risk.get("action","")}</span>', unsafe_allow_html=True)
+
+
+# ── Session State ─────────────────────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "👋 Hello! I'm your AI Health Assistant.\n\nDescribe your symptoms in plain language and my AI agents will analyze them for you.\n\n**Example:** *\"I've had a high fever and chills since yesterday, along with body aches.\"*\n\n> ⚠️ *I'm not a doctor. Always consult a medical professional for real advice.*",
+        "content": (
+            "👋 Hello! I'm your **AI Health Assistant**.\n\n"
+            "You can:\n"
+            "- 💬 Describe your symptoms in plain language\n"
+            "- 📋 Upload a medical report from the sidebar and ask about it\n"
+            "- 🔍 Do both together for a complete analysis\n\n"
+            "**Example:** *\"I've had a high fever and chills since yesterday, along with body aches.\"*\n\n"
+            "> ⚠️ *I'm not a doctor. Always consult a medical professional for real advice.*"
+        ),
         "meta": None
     })
 
 
-# ── Render Chat History ────────────────────────────────────────────────────────
+# ── Render Chat History ───────────────────────────────────────────────────────
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"], avatar="🧑" if msg["role"] == "user" else "🏥"):
         st.markdown(msg["content"])
-
-        # If this assistant message has pipeline metadata, show the details
-        meta = msg.get("meta")
-        if meta and not meta.get("error"):
-            with st.expander("🔬 View Agent Pipeline Analysis", expanded=False):
-                _render_pipeline_details(meta) if False else None
-                
-                risk = meta.get("risk", {})
-                level = risk.get("risk_level", "MEDIUM")
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown('<div class="pipeline-label">🔎 Extracted Symptoms</div>', unsafe_allow_html=True)
-                    chips = "".join([f'<span class="symptom-chip">{s}</span>' for s in meta.get("raw_symptoms", [])])
-                    st.markdown(f'<div>{chips}</div>', unsafe_allow_html=True)
-
-                    st.markdown('<br><div class="pipeline-label">🏥 Normalized (Medical Terms)</div>', unsafe_allow_html=True)
-                    chips2 = "".join([f'<span class="symptom-chip">{s}</span>' for s in meta.get("normalized_symptoms", [])])
-                    st.markdown(f'<div>{chips2}</div>', unsafe_allow_html=True)
-
-                with col2:
-                    st.markdown('<div class="pipeline-label">🦠 Predicted Conditions</div>', unsafe_allow_html=True)
-                    for c in meta.get("conditions", []):
-                        prob_color = {"High": "#ff7777", "Medium": "#ffcc44", "Low": "#77cc88"}.get(c.get("probability", ""), "#aaaaaa")
-                        st.markdown(
-                            f'<div class="condition-item">'
-                            f'<strong>{c.get("name")}</strong> '
-                            f'<span style="color:{prob_color};font-size:0.78rem;">({c.get("probability")})</span>'
-                            f'</div>',
-                            unsafe_allow_html=True
-                        )
-
-                st.markdown("---")
-                st.markdown(f'<span class="risk-badge risk-{level}">⚡ {level} Risk</span>', unsafe_allow_html=True)
-                st.markdown(f'<span style="color:#aaa;font-size:0.85rem;">{risk.get("reason","")}</span>', unsafe_allow_html=True)
-                st.markdown(f'<br><strong style="color:#e0f0ec;">Action:</strong> <span style="color:#b0d8cc;">{risk.get("action","")}</span>', unsafe_allow_html=True)
+        if msg["role"] == "assistant" and msg.get("meta"):
+            render_pipeline_expander(msg["meta"])
 
 
-# ── User Input Handler ─────────────────────────────────────────────────────────
-if user_input := st.chat_input("Describe your symptoms here..."):
+# ── Input Handler ─────────────────────────────────────────────────────────────
+if user_input := st.chat_input("Describe your symptoms or ask about your report..."):
 
-    # Show user message immediately
-    st.session_state.messages.append({"role": "user", "content": user_input, "meta": None})
+    report_data, report_type = process_uploaded_file(uploaded_file)
+    has_report = report_data is not None
+
+    display_msg = user_input
+    if has_report:
+        display_msg += f"\n\n📎 *Report attached: `{uploaded_file.name}`*"
+
+    st.session_state.messages.append({"role": "user", "content": display_msg, "meta": None})
     with st.chat_message("user", avatar="🧑"):
-        st.markdown(user_input)
+        st.markdown(display_msg)
 
-    # Run the LangGraph pipeline
     with st.chat_message("assistant", avatar="🏥"):
-        with st.spinner("🤖 AI agents are analyzing your symptoms..."):
-
-            # ── LANGGRAPH INVOCATION ──────────────────────────────────────────
-            # This single call runs the entire multi-agent graph:
-            # supervisor → extract → normalize → predict → assess → advise
-            # The graph manages all state transitions internally.
+        spinner_msg = "🤖 Analyzing your report and symptoms..." if has_report else "🤖 AI agents are analyzing your symptoms..."
+        with st.spinner(spinner_msg):
+            # Single call — runs entire LangGraph multi-agent pipeline
             final_state = health_graph.invoke({
-                "user_input": user_input,
-                "error": False
+                "user_input":  user_input,
+                "has_report":  has_report,
+                "report_data": report_data,
+                "report_type": report_type,
+                "error":       False
             })
-            # ─────────────────────────────────────────────────────────────────
 
-        response_text = final_state.get("final_response", "I encountered an issue processing your request.")
+        response_text = final_state.get("final_response", "I encountered an issue. Please try again.")
         st.markdown(response_text)
 
-        # Build metadata for the expander
         meta = {
-            "error": final_state.get("error", False),
-            "raw_symptoms": final_state.get("raw_symptoms", []),
-            "normalized_symptoms": final_state.get("normalized_symptoms", []),
-            "conditions": final_state.get("predicted_conditions", []),
-            "risk": final_state.get("risk_assessment", {})
+            "error":               final_state.get("error", False),
+            "raw_symptoms":        final_state.get("raw_symptoms") or [],
+            "normalized_symptoms": final_state.get("normalized_symptoms") or [],
+            "conditions":          final_state.get("predicted_conditions") or [],
+            "risk":                final_state.get("risk_assessment") or {},
+            "report_analysis":     final_state.get("report_analysis"),
         }
 
-        # Show pipeline details inline for the latest message
-        if not meta["error"] and meta["raw_symptoms"]:
-            with st.expander("🔬 View Agent Pipeline Analysis", expanded=False):
-                risk = meta.get("risk", {})
-                level = risk.get("risk_level", "MEDIUM")
+        render_pipeline_expander(meta)
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown('<div class="pipeline-label">🔎 Extracted Symptoms</div>', unsafe_allow_html=True)
-                    chips = "".join([f'<span class="symptom-chip">{s}</span>' for s in meta.get("raw_symptoms", [])])
-                    st.markdown(f'<div>{chips}</div>', unsafe_allow_html=True)
-
-                    st.markdown('<br><div class="pipeline-label">🏥 Normalized (Medical Terms)</div>', unsafe_allow_html=True)
-                    chips2 = "".join([f'<span class="symptom-chip">{s}</span>' for s in meta.get("normalized_symptoms", [])])
-                    st.markdown(f'<div>{chips2}</div>', unsafe_allow_html=True)
-
-                with col2:
-                    st.markdown('<div class="pipeline-label">🦠 Predicted Conditions</div>', unsafe_allow_html=True)
-                    for c in meta.get("conditions", []):
-                        prob_color = {"High": "#ff7777", "Medium": "#ffcc44", "Low": "#77cc88"}.get(c.get("probability", ""), "#aaaaaa")
-                        st.markdown(
-                            f'<div class="condition-item">'
-                            f'<strong>{c.get("name")}</strong> '
-                            f'<span style="color:{prob_color};font-size:0.78rem;">({c.get("probability")})</span>'
-                            f'</div>',
-                            unsafe_allow_html=True
-                        )
-
-                st.markdown("---")
-                st.markdown(f'<span class="risk-badge risk-{level}">⚡ {level} Risk</span>', unsafe_allow_html=True)
-                st.markdown(f'<span style="color:#aaa;font-size:0.85rem;">{risk.get("reason","")}</span>', unsafe_allow_html=True)
-                st.markdown(f'<br><strong style="color:#e0f0ec;">Action:</strong> <span style="color:#b0d8cc;">{risk.get("action","")}</span>', unsafe_allow_html=True)
-
-        # Save to session history
         st.session_state.messages.append({
-            "role": "assistant",
+            "role":    "assistant",
             "content": response_text,
-            "meta": meta
+            "meta":    meta
         })

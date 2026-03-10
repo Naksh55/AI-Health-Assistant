@@ -7,6 +7,7 @@ from agents.symptom_normalizer import symptom_normalization_node
 from agents.disease_predictor import disease_prediction_node
 from agents.risk_assessor import risk_assessment_node
 from agents.medical_advisor import medical_advice_node
+from agents.report_analyzer import report_analysis_node
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -26,14 +27,25 @@ def supervisor_node(state: HealthAgentState) -> dict:
     print(f"[Supervisor] User input: {state['user_input']}")
 
     user_input = state.get("user_input", "").strip()
+    has_report = state.get("has_report", False)
 
-    if not user_input:
+    if not user_input and not has_report:
         return {
             "error": True,
             "error_message": "Please describe your symptoms to get started."
         }
 
-    # Reset state for a fresh run
+    # If user uploaded report with short/no symptom text — allow it
+    if has_report and len(user_input.split()) < 6:
+        return {
+            "error": False,
+            "raw_symptoms": [],
+            "normalized_symptoms": [],
+            "predicted_conditions": [],
+            "risk_assessment": None,
+            "final_response": None
+        }
+
     return {
         "error": False,
         "raw_symptoms": None,
@@ -42,6 +54,19 @@ def supervisor_node(state: HealthAgentState) -> dict:
         "risk_assessment": None,
         "final_response": None
     }
+
+def route_entry(state: HealthAgentState) -> str:
+    """
+    NEW: First routing decision —
+    Did the user upload a report? 
+    Yes → go to report analysis first
+    No  → go straight to symptom extraction
+    """
+    if state.get("has_report"):
+        print("[Router] Report detected — routing to report analyzer")
+        return "analyze_report"
+    print("[Router] No report — routing to symptom extraction")
+    return "extract_symptoms"
 
 
 # ── Emergency Fast-Path Node ─────────────────────────────────────────────────
@@ -81,14 +106,20 @@ Action needed: {risk.get('action', 'Call emergency services immediately')}
 # They look at the current state and return the STRING NAME of the next node.
 
 def route_after_extraction(state: HealthAgentState) -> str:
-    """
-    Called after symptom extraction.
-    If extraction found an error (no symptoms), go straight to END.
-    Otherwise, proceed to normalization.
-    """
-    if state.get("error"):
+    has_report = state.get("has_report", False)
+    has_symptoms = bool(state.get("raw_symptoms"))
+    error = state.get("error", False)
+
+    # Has report but no symptoms — still continue for report-based advice
+    if not has_symptoms and has_report:
+        print("[Router] No symptoms but report present — continuing pipeline")
+        return "normalize_symptoms"
+
+    # No symptoms and no report — exit with error
+    if error or not has_symptoms:
         print("[Router] No symptoms found — routing to END")
         return "end_with_error"
+
     print("[Router] Symptoms found — routing to normalize")
     return "normalize_symptoms"
 
@@ -127,6 +158,7 @@ def build_health_graph():
 
     # 2. Register all nodes (name → function)
     graph.add_node("supervisor",         supervisor_node)
+    graph.add_node("analyze_report",     report_analysis_node)
     graph.add_node("extract_symptoms",   symptom_extraction_node)
     graph.add_node("normalize_symptoms", symptom_normalization_node)
     graph.add_node("predict_disease",    disease_prediction_node)
@@ -140,8 +172,18 @@ def build_health_graph():
     # Entry point: START → supervisor
     graph.add_edge(START, "supervisor")
 
-    # Supervisor always goes to extraction
-    graph.add_edge("supervisor", "extract_symptoms")
+    #After supervisor, check if report was uploaded
+    graph.add_conditional_edges(
+        "supervisor",
+        route_entry,
+        {
+            "analyze_report":   "analyze_report",
+            "extract_symptoms": "extract_symptoms"
+        }
+    )
+
+    # After report analysis, continue to symptom extraction
+    graph.add_edge("analyze_report", "extract_symptoms")
 
     # After extraction: CONDITIONAL — branch on error vs success
     graph.add_conditional_edges(

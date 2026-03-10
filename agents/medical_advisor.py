@@ -62,6 +62,8 @@ Clinical Analysis:
 - Top possible conditions:
 {conditions_text}
 
+{report_context}
+
 Generate a helpful, patient-friendly response.""")
 ])
 
@@ -70,32 +72,38 @@ chain = prompt | llm | StrOutputParser()
 
 
 def medical_advice_node(state: HealthAgentState) -> dict:
-    """
-    LangGraph Node: Medical Advice (Final Synthesis)
-
-    Input  (from state): Everything — user_input, symptoms, conditions, risk
-    Output (to state)  : {"final_response": "..."}
-    """
-    print("  [Node] MedicalAdvisor running...")
+    """Updated to include report analysis if available"""
 
     conditions = state.get("predicted_conditions", [])
     risk = state.get("risk_assessment", {})
+    report_analysis = state.get("report_analysis")  # NEW
 
-    # Format conditions into readable text for the prompt
     conditions_text = "\n".join([
-        f"  • {c.get('name', 'Unknown')} ({c.get('probability', 'Unknown')} probability): "
-        f"{c.get('reasoning', '')}"
+        f"  • {c.get('name')} ({c.get('probability')} probability): {c.get('reasoning')}"
         for c in conditions
     ]) or "  • No specific conditions identified"
 
+    # Build report context if available
+    report_context = ""
+    if report_analysis:
+        abnormal = report_analysis.get("abnormal_findings", [])
+        report_context = f"""
+Medical Report Analysis:
+- Report Type: {report_analysis.get('report_type', 'Unknown')}
+- Summary: {report_analysis.get('summary', '')}
+- Abnormal Findings: {', '.join(abnormal) if abnormal else 'None detected'}
+- Urgency: {report_analysis.get('urgency_level', 'ROUTINE')}
+- Doctor Notes: {report_analysis.get('doctor_notes', 'None')}
+"""
+
     response = chain.invoke({
         "user_input": state.get("user_input", ""),
-        "symptoms": ", ".join(state.get("normalized_symptoms", [])),
+        "symptoms": ", ".join(state.get("normalized_symptoms") or []),
         "risk_level": risk.get("risk_level", "MEDIUM"),
         "risk_reason": risk.get("reason", ""),
         "risk_action": risk.get("action", "Consult a healthcare provider"),
-        "conditions_text": conditions_text
+        "conditions_text": conditions_text,
+        "report_context": report_context  # NEW
     })
 
-    print("  [Node] Medical advice generated.")
     return {"final_response": response}
