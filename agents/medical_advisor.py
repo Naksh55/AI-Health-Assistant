@@ -10,28 +10,37 @@ WHAT IT DOES:
   - Clear next steps
   - Medical disclaimer
 
-LANGGRAPH ROLE:
-  Final specialist node. Reads everything from state, writes `final_response`.
-
-LANGCHAIN CONCEPT — Multiple input variables in ChatPromptTemplate:
-  Here we pass multiple variables from the state into a single prompt template.
-  This shows how prompts can be dynamically constructed from rich state data.
+FIXES APPLIED:
+  1. Added report_summary variable passed to chain.invoke()
+  2. Prompt now explicitly quotes exact report values when user asks
+  3. Report context is richer — includes key values, not just abnormal names
+  4. Disease prediction now weighted toward report findings
 """
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from agents.state import HealthAgentState
-from dotenv import load_dotenv
-load_dotenv()
+
 
 ADVICE_SYSTEM = """You are a compassionate, knowledgeable medical advisor AI assistant.
 Your job is to translate clinical findings into clear, friendly, actionable health guidance.
 
+CRITICAL RULES:
+1. If the user asks about specific test values (e.g. "what is my cholesterol"), 
+   ALWAYS quote the EXACT numbers from the report (e.g. "Your LDL is 138 mg/dL").
+2. If a medical report is available, PRIORITIZE report findings over general knowledge.
+3. Connect symptoms directly to report abnormalities whenever possible.
+4. Never give generic advice when specific report data is available.
+
 Format your response using this exact structure with emojis and markdown:
 
 ## 🩺 What Might Be Going On
-[Explain the top 1-2 likely conditions in simple, non-alarming language]
+[Explain the top 1-2 likely conditions in simple, non-alarming language.
+ If report is available, reference specific values from it.]
 
 ## 💊 Self-Care Tips
 [3-4 practical home care tips relevant to their symptoms]
@@ -59,12 +68,17 @@ Clinical Analysis:
 - Symptoms identified: {symptoms}
 - Risk level: {risk_level} — {risk_reason}
 - Recommended action: {risk_action}
-- Top possible conditions:
+
+Top possible conditions:
 {conditions_text}
 
 {report_context}
 
-Generate a helpful, patient-friendly response.""")
+Report Summary (use exact values when user asks about specific tests):
+{report_summary}
+
+Generate a helpful, patient-friendly response.
+If the patient is asking about specific test values, quote the exact numbers from the report.""")
 ])
 
 llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
@@ -72,38 +86,87 @@ chain = prompt | llm | StrOutputParser()
 
 
 def medical_advice_node(state: HealthAgentState) -> dict:
-    """Updated to include report analysis if available"""
+    """
+    LangGraph Node: Medical Advice (Final Synthesis)
 
-    conditions = state.get("predicted_conditions", [])
-    risk = state.get("risk_assessment", {})
-    report_analysis = state.get("report_analysis")  # NEW
+    Input  (from state): Everything — user_input, symptoms, conditions, risk, report
+    Output (to state)  : {"final_response": "..."}
+    """
+    conditions     = state.get("predicted_conditions", [])
+    risk           = state.get("risk_assessment", {})
+    report_analysis = state.get("report_analysis")
 
+    # ── Format conditions text ──────────────────────────────────────────────
     conditions_text = "\n".join([
-        f"  • {c.get('name')} ({c.get('probability')} probability): {c.get('reasoning')}"
+        f"  • {c.get('name', 'Unknown')} ({c.get('probability', '')} probability): "
+        f"{c.get('reasoning', '')}"
         for c in conditions
     ]) or "  • No specific conditions identified"
 
-    # Build report context if available
+    # ── Build rich report context ───────────────────────────────────────────
+    # This is the KEY fix — we now pass specific values, not just names
     report_context = ""
-    if report_analysis:
-        abnormal = report_analysis.get("abnormal_findings", [])
-        report_context = f"""
-Medical Report Analysis:
-- Report Type: {report_analysis.get('report_type', 'Unknown')}
-- Summary: {report_analysis.get('summary', '')}
-- Abnormal Findings: {', '.join(abnormal) if abnormal else 'None detected'}
-- Urgency: {report_analysis.get('urgency_level', 'ROUTINE')}
-- Doctor Notes: {report_analysis.get('doctor_notes', 'None')}
-"""
+    report_summary = "No medical report uploaded."
 
+    if report_analysis:
+        abnormal  = report_analysis.get("abnormal_findings", [])
+        normal    = report_analysis.get("normal_findings", [])
+        doc_notes = report_analysis.get("doctor_notes", "")
+        urgency   = report_analysis.get("urgency_level", "ROUTINE")
+        summary   = report_analysis.get("summary", "")
+        pat_summary = report_analysis.get("patient_friendly_summary", "")
+
+        # Detailed context for the model to reason from
+        report_context = f"""
+━━━ MEDICAL REPORT CONTEXT (PRIORITIZE THIS) ━━━
+Report Type  : {report_analysis.get('report_type', 'Unknown')}
+Urgency Level: {urgency}
+Summary      : {summary}
+
+Abnormal Findings (OUT OF RANGE):
+{chr(10).join([f"  ⚠ {f}" for f in abnormal]) if abnormal else "  None"}
+
+Normal Findings (WITHIN RANGE):
+{chr(10).join([f"  ✓ {f}" for f in normal]) if normal else "  None"}
+
+Doctor Notes : {doc_notes if doc_notes else "None recorded"}
+Medications  : {', '.join(report_analysis.get('medications_mentioned') or [])}
+
+Follow-up Tests Recommended: {', '.join(report_analysis.get('recommended_tests', [])) or 'None'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+        # Compact summary with exact values for direct questions
+        # e.g. "what is my cholesterol" → gives exact numbers
+        key_findings = report_analysis.get("key_findings", [])
+        if key_findings:
+            lines = []
+            for kf in key_findings:
+                param  = kf.get("parameter", "")
+                value  = kf.get("value", "")
+                ref    = kf.get("normal_range", "")
+                status = kf.get("status", "")
+                sig    = kf.get("significance", "")
+                lines.append(f"  {param}: {value} (Normal: {ref}) [{status}] — {sig}")
+            report_summary = "\n".join(lines)
+        else:
+            # Fallback — use abnormal findings list
+            report_summary = (
+                f"Report type: {report_analysis.get('report_type','Unknown')}\n"
+                f"Patient summary: {pat_summary}\n"
+                f"Abnormal: {', '.join(abnormal) if abnormal else 'None'}"
+            )
+
+    # ── Invoke the chain ────────────────────────────────────────────────────
     response = chain.invoke({
-        "user_input": state.get("user_input", ""),
-        "symptoms": ", ".join(state.get("normalized_symptoms") or []),
-        "risk_level": risk.get("risk_level", "MEDIUM"),
-        "risk_reason": risk.get("reason", ""),
-        "risk_action": risk.get("action", "Consult a healthcare provider"),
+        "user_input":      state.get("user_input", ""),
+        "symptoms":        ", ".join(state.get("normalized_symptoms") or []),
+        "risk_level":      risk.get("risk_level", "MEDIUM"),
+        "risk_reason":     risk.get("reason", ""),
+        "risk_action":     risk.get("action", "Consult a healthcare provider"),
         "conditions_text": conditions_text,
-        "report_context": report_context  # NEW
+        "report_context":  report_context,
+        "report_summary":  report_summary,   # ← FIX: was missing before
     })
 
+    print("  [Node] Medical advice generated.")
     return {"final_response": response}
