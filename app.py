@@ -28,6 +28,7 @@ st.set_page_config(
 
 if "messages"   not in st.session_state: st.session_state.messages   = []
 if "open_pipes" not in st.session_state: st.session_state.open_pipes = {}
+if "sidebar_open" not in st.session_state: st.session_state.sidebar_open = True
 
 st.markdown("""
 <style>
@@ -64,31 +65,27 @@ html, body,
 #MainMenu, footer, header { visibility: hidden !important; }
 .stDeployButton,
 [data-testid="stDecoration"],
-[data-testid="stToolbar"],
-[data-testid="collapsedControl"],
-[data-testid="baseButton-header"],
-button[kind="header"],
-[aria-label="Close sidebar"],
-[aria-label="Open sidebar"],
-button[aria-label="Close sidebar"],
-button[aria-label="Open sidebar"] { display: none !important; }
+[data-testid="stToolbar"] { display: none !important; }
 
-/* Sidebar — permanently visible, no collapse */
-section[data-testid="stSidebar"] {
-    background: #ffffff !important;
-    border-right: 1px solid #d0e8df !important;
-    box-shadow: 3px 0 20px rgba(0,120,80,0.08) !important;
-    min-width: 270px !important;
-    max-width: 270px !important;
-    transform: none !important;
-    visibility: visible !important;
-    pointer-events: all !important;
+
+/* Sidebar — hide when closed via session state */
+body.sidebar-closed section[data-testid="stSidebar"] {
+    display: none !important;
 }
-section[data-testid="stSidebar"][aria-expanded="false"] {
-    transform: none !important;
+body.sidebar-closed [data-testid="stAppViewContainer"] {
     margin-left: 0 !important;
-    display: block !important;
 }
+
+/* Hide sidebar when session state says closed */
+body.sidebar-closed section[data-testid="stSidebar"] {
+    display: none !important;
+}
+
+/* Remove left margin when hidden */
+body.sidebar-closed [data-testid="stAppViewContainer"] {
+    margin-left: 0 !important;
+}
+            
 section[data-testid="stSidebar"] > div {
     background: #ffffff !important;
     padding: 0 0 24px 0 !important;
@@ -464,6 +461,15 @@ div[data-testid="stChatMessageContent"][aria-label="Chat message from user"] p {
 """
 st.markdown(COMPONENT_CSS, unsafe_allow_html=True)
 
+# Inject script to toggle sidebar visibility based on session state
+if not st.session_state.sidebar_open:
+    st.markdown("""
+    <script>
+        document.documentElement.classList.add('sidebar-closed');
+        document.body.classList.add('sidebar-closed');
+    </script>
+    """, unsafe_allow_html=True)
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def process_uploaded_file(file):
@@ -584,6 +590,15 @@ def render_pipeline(meta: dict, key: str):
     if not meta or meta.get("error"):
         return
 
+    # FIX: Hide pipeline for intents that don't use the symptom pipeline
+    intent = meta.get("intent", "SYMPTOM_ANALYSIS")
+    if intent in ("SIMPLE_QUESTION", "ACTION_REQUEST"):
+        return
+    has_symptoms = bool(meta.get("raw_symptoms") or meta.get("normalized_symptoms"))
+    has_report   = bool(meta.get("report_analysis"))
+    if not has_symptoms and not has_report:
+        return
+
     toggle_key = f"pipe_{key}"
     if toggle_key not in st.session_state:
         st.session_state[toggle_key] = False
@@ -663,16 +678,21 @@ with st.sidebar:
         <div class="sb-sub">Clinical Assistant · v1.0</div>
     </div>""", unsafe_allow_html=True)
 
+    # Close sidebar button
+    if st.button("✕ Close", use_container_width=True, key="close_sidebar_btn"):
+        st.session_state.sidebar_open = False
+        st.rerun()
+
     st.markdown('<div class="sb-sec">', unsafe_allow_html=True)
     st.markdown('<div class="sb-lbl">Upload Medical Report</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
-        "PDF, JPG or PNG", type=["pdf", "jpg", "jpeg", "png"],
+        "PDF,z JPG or PNG", type=["pdf", "jpg", "jpeg", "png"],
         label_visibility="collapsed", key="file_uploader"
     )
     if uploaded_file:
         st.success(f"Ready: {uploaded_file.name}")
         if uploaded_file.type.startswith("image"):
-            st.image(uploaded_file, use_column_width=True)
+            st.image(uploaded_file, width=320)
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="sb-sec">', unsafe_allow_html=True)
@@ -685,6 +705,15 @@ with st.sidebar:
 # ══════════════════════════════════════════════════════════
 # TOPBAR
 # ══════════════════════════════════════════════════════════
+
+# Open sidebar button (shown when closed)
+if not st.session_state.sidebar_open:
+    col_open, _ = st.columns([1, 9])
+    with col_open:
+        if st.button("☰", key="open_sidebar_btn"):
+            st.session_state.sidebar_open = True
+            st.rerun()
+
 st.markdown("""
 <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
@@ -744,28 +773,38 @@ if user_input := st.chat_input("Describe your symptoms or ask about your report.
         st.markdown(display_msg)
 
     with st.chat_message("assistant", avatar="⚕️"):
+        from groq import RateLimitError
+
+        # Build conversation context — last 6 messages for follow-up awareness
+        # This lets the model understand "yes" replies to its own questions
+        recent_history = st.session_state.messages[-6:] if st.session_state.messages else []
+        chat_history_for_graph = [
+            {"role": m["role"], "content": m["content"]}
+            for m in recent_history
+        ]
+
         with st.spinner("Analyzing..." if has_report else "Running pipeline..."):
-           from groq import RateLimitError
+            try:
+                final_state = health_graph.invoke({
+                    "user_input":   user_input,
+                    "has_report":   has_report,
+                    "report_data":  report_data,
+                    "report_type":  report_type,
+                    "chat_history": chat_history_for_graph,
+                    "error":        False
+                })
 
-        try:
-            final_state = health_graph.invoke({
-                "user_input": user_input,
-                "has_report": has_report,
-                "report_data": report_data,
-                "report_type": report_type,
-                "error": False
-            })
-
-        except RateLimitError:
-            final_state = {
-                "final_response": "⚠️ API limit reached. Please try again after a few minutes."
-            }
+            except RateLimitError:
+                final_state = {
+                    "final_response": "⚠️ API rate limit reached. Please wait a moment and try again."
+                }
 
         response_text = final_state.get("final_response", "Something went wrong. Please try again.")
         render_response(response_text)
 
         meta = {
             "error":               final_state.get("error", False),
+            "intent":              final_state.get("intent", "SYMPTOM_ANALYSIS"),
             "raw_symptoms":        final_state.get("raw_symptoms") or [],
             "normalized_symptoms": final_state.get("normalized_symptoms") or [],
             "conditions":          final_state.get("predicted_conditions") or [],
