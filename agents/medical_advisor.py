@@ -39,23 +39,23 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 4. Reference the patient's SPECIFIC symptoms and report values — not generic advice
 5. Speak like a doctor, not a robot
 
-FORMAT — use EXACTLY this structure:
+FORMAT — use EXACTLY these section headers, word for word, no changes:
 
-## 🩺 What's Going On
+## 🩺 WHAT IS GOING ON
 [Write 2-3 sentences explaining the likely condition. Reference actual values if available.
 Example: "Based on your symptoms and the report showing Hb of 8.4 g/dL, you have iron deficiency anemia..."]
 
-## 💊 What You Can Do At Home
+## 💊 SELF-CARE TIPS
 - [Specific self-care tip 1 relevant to their condition]
 - [Specific self-care tip 2 relevant to their condition]
 - [Specific self-care tip 3 relevant to their condition]
 
-## ⚠️ Watch Out For
+## ⚠️ WARNING SIGNS
 - [Warning sign 1 — specific to their condition]
 - [Warning sign 2 — specific to their condition]
 - [Warning sign 3 — when to seek immediate help]
 
-## 📋 What To Do Next
+## 📋 NEXT STEPS
 - [Action item 1 — most urgent]
 - [Action item 2 — follow-up]
 - [Action item 3 — monitoring/prevention]
@@ -153,17 +153,17 @@ def _ensure_sections_filled(response: str, conditions: list, symptoms: list) -> 
 
     # Default fallbacks for each section
     defaults = {
-        "What You Can Do At Home": [
+        "SELF-CARE TIPS": [
             f"Rest adequately and avoid strenuous activity until your symptoms improve.",
             f"Stay well-hydrated by drinking 8-10 glasses of water daily.",
             f"Eat a balanced, nutritious diet to support your recovery.",
         ],
-        "Watch Out For": [
+        "WARNING SIGNS": [
             f"Sudden worsening of {symptom_str} — seek medical help immediately.",
             f"High fever above 103°F (39.4°C) that does not come down.",
             f"Difficulty breathing, chest pain, or loss of consciousness.",
         ],
-        "What To Do Next": [
+        "NEXT STEPS": [
             f"Consult your doctor to discuss treatment options for {condition_name}.",
             f"Get any recommended follow-up tests done promptly.",
             f"Monitor your symptoms and return for a check-up as advised.",

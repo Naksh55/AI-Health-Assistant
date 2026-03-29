@@ -28,7 +28,6 @@ st.set_page_config(
 
 if "messages"   not in st.session_state: st.session_state.messages   = []
 if "open_pipes" not in st.session_state: st.session_state.open_pipes = {}
-if "sidebar_open" not in st.session_state: st.session_state.sidebar_open = True
 
 st.markdown("""
 <style>
@@ -65,27 +64,31 @@ html, body,
 #MainMenu, footer, header { visibility: hidden !important; }
 .stDeployButton,
 [data-testid="stDecoration"],
-[data-testid="stToolbar"] { display: none !important; }
+[data-testid="stToolbar"],
+[data-testid="collapsedControl"],
+[data-testid="baseButton-header"],
+button[kind="header"],
+[aria-label="Close sidebar"],
+[aria-label="Open sidebar"],
+button[aria-label="Close sidebar"],
+button[aria-label="Open sidebar"] { display: none !important; }
 
-
-/* Sidebar — hide when closed via session state */
-body.sidebar-closed section[data-testid="stSidebar"] {
-    display: none !important;
+/* Sidebar — permanently visible, no collapse */
+section[data-testid="stSidebar"] {
+    background: #ffffff !important;
+    border-right: 1px solid #d0e8df !important;
+    box-shadow: 3px 0 20px rgba(0,120,80,0.08) !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    transform: none !important;
+    visibility: visible !important;
+    pointer-events: all !important;
 }
-body.sidebar-closed [data-testid="stAppViewContainer"] {
+section[data-testid="stSidebar"][aria-expanded="false"] {
+    transform: none !important;
     margin-left: 0 !important;
+    display: block !important;
 }
-
-/* Hide sidebar when session state says closed */
-body.sidebar-closed section[data-testid="stSidebar"] {
-    display: none !important;
-}
-
-/* Remove left margin when hidden */
-body.sidebar-closed [data-testid="stAppViewContainer"] {
-    margin-left: 0 !important;
-}
-            
 section[data-testid="stSidebar"] > div {
     background: #ffffff !important;
     padding: 0 0 24px 0 !important;
@@ -461,14 +464,7 @@ div[data-testid="stChatMessageContent"][aria-label="Chat message from user"] p {
 """
 st.markdown(COMPONENT_CSS, unsafe_allow_html=True)
 
-# Inject script to toggle sidebar visibility based on session state
-if not st.session_state.sidebar_open:
-    st.markdown("""
-    <script>
-        document.documentElement.classList.add('sidebar-closed');
-        document.body.classList.add('sidebar-closed');
-    </script>
-    """, unsafe_allow_html=True)
+# Sidebar is always visible — no toggle needed
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -492,20 +488,26 @@ def process_uploaded_file(file):
     return None, None
 
 
+# REPLACE with this:
 def parse_sections(text: str) -> dict:
+    # Strip disclaimer lines between --- markers
     text = re.sub(r"-{2,}.*?-{2,}", "", text, flags=re.DOTALL).strip()
     secs = {}
+
+    # ── LOCKED HEADERS — must match medical_advisor.py exactly ───────────────
+    # Headers are ALL CAPS so they never drift between files.
     patterns = {
-        "condition": r"##\s*[^\n]*Going On[^\n]*\n(.*?)(?=##|\Z)",
-        "selfcare":  r"##\s*[^\n]*Self[^\n]*\n(.*?)(?=##|\Z)",
-        "warning":   r"##\s*[^\n]*(?:Warning|Seek)[^\n]*\n(.*?)(?=##|\Z)",
-        "nextsteps": r"##\s*[^\n]*(?:Next|Steps|Recommended)[^\n]*\n(.*?)(?=##|\Z)",
+        "condition": r"##\s*[^\n]*WHAT IS GOING ON[^\n]*\n(.*?)(?=##|\Z)",
+        "selfcare":  r"##\s*[^\n]*SELF-CARE TIPS[^\n]*\n(.*?)(?=##|\Z)",
+        "warning":   r"##\s*[^\n]*WARNING SIGNS[^\n]*\n(.*?)(?=##|\Z)",
+        "nextsteps": r"##\s*[^\n]*NEXT STEPS[^\n]*\n(.*?)(?=##|\Z)",
     }
+
     for key, pat in patterns.items():
         m = re.search(pat, text, re.DOTALL | re.IGNORECASE)
         if m:
             raw = m.group(1).strip()
-            bullets = re.findall(r"[-•*]\s*(.+?)(?=\n\s*[-•*]|\Z)", raw, re.DOTALL)
+            bullets = re.findall(r"[-\u2022*]\s*(.+?)(?=\n\s*[-\u2022*]|\Z)", raw, re.DOTALL)
             bullets = [
                 b.strip().replace("\n", " ")
                 for b in bullets
@@ -514,11 +516,10 @@ def parse_sections(text: str) -> dict:
                 and not b.strip().startswith("*AI")
                 and not b.strip().startswith("AI-gen")
                 and "not a medical" not in b.lower()
-                and "consult a" not in b.lower()[:30]
+                and "consult a qualified" not in b.lower()[:40]
             ]
             secs[key] = bullets if bullets else [raw[:280].strip()]
     return secs
-
 def render_response(text: str):
     secs = parse_sections(text)
     if not secs:
@@ -590,9 +591,10 @@ def render_pipeline(meta: dict, key: str):
     if not meta or meta.get("error"):
         return
 
-    # FIX: Hide pipeline for intents that don't use the symptom pipeline
+    # FIX: Only show pipeline for SYMPTOM_ANALYSIS and REPORT_OVERVIEW
+    # Hide for simple questions, report value queries, and action requests
     intent = meta.get("intent", "SYMPTOM_ANALYSIS")
-    if intent in ("SIMPLE_QUESTION", "ACTION_REQUEST"):
+    if intent in ("SIMPLE_QUESTION", "ACTION_REQUEST", "REPORT_QUERY"):
         return
     has_symptoms = bool(meta.get("raw_symptoms") or meta.get("normalized_symptoms"))
     has_report   = bool(meta.get("report_analysis"))
@@ -678,11 +680,6 @@ with st.sidebar:
         <div class="sb-sub">Clinical Assistant · v1.0</div>
     </div>""", unsafe_allow_html=True)
 
-    # Close sidebar button
-    if st.button("✕ Close", use_container_width=True, key="close_sidebar_btn"):
-        st.session_state.sidebar_open = False
-        st.rerun()
-
     st.markdown('<div class="sb-sec">', unsafe_allow_html=True)
     st.markdown('<div class="sb-lbl">Upload Medical Report</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
@@ -705,14 +702,6 @@ with st.sidebar:
 # ══════════════════════════════════════════════════════════
 # TOPBAR
 # ══════════════════════════════════════════════════════════
-
-# Open sidebar button (shown when closed)
-if not st.session_state.sidebar_open:
-    col_open, _ = st.columns([1, 9])
-    with col_open:
-        if st.button("☰", key="open_sidebar_btn"):
-            st.session_state.sidebar_open = True
-            st.rerun()
 
 st.markdown("""
 <div class="topbar">
