@@ -490,24 +490,27 @@ def process_uploaded_file(file):
 
 # REPLACE with this:
 def parse_sections(text: str) -> dict:
-    # Strip disclaimer lines between --- markers
     text = re.sub(r"-{2,}.*?-{2,}", "", text, flags=re.DOTALL).strip()
     secs = {}
-
-    # ── LOCKED HEADERS — must match medical_advisor.py exactly ───────────────
-    # Headers are ALL CAPS so they never drift between files.
     patterns = {
-        "condition": r"##\s*[^\n]*WHAT IS GOING ON[^\n]*\n(.*?)(?=##|\Z)",
-        "selfcare":  r"##\s*[^\n]*SELF-CARE TIPS[^\n]*\n(.*?)(?=##|\Z)",
-        "warning":   r"##\s*[^\n]*WARNING SIGNS[^\n]*\n(.*?)(?=##|\Z)",
-        "nextsteps": r"##\s*[^\n]*NEXT STEPS[^\n]*\n(.*?)(?=##|\Z)",
+        # Matches: "What Might Be Going On" OR "What's Going On"
+        "condition": r"##\s*[^\n]*(?:Going On|What.*?Going)[^\n]*\n(.*?)(?=##|\Z)",
+
+        # Matches: "Self-Care Tips" OR "What You Can Do At Home" OR "Home Care"
+        "selfcare":  r"##\s*[^\n]*(?:Self|Can Do|Home Care|At Home|Care Tips)[^\n]*\n(.*?)(?=##|\Z)",
+
+        # Matches: "Watch Out For" OR "Warning Signs" OR "Seek Help If" OR "⚠️"
+        "warning":   r"##\s*[^\n]*(?:Watch Out|Warning|Seek Help|Seek Immediate|Look Out)[^\n]*\n(.*?)(?=##|\Z)",
+
+        # Matches: "What To Do Next" OR "Next Steps" OR "Recommended Next Steps"
+        "nextsteps": r"##\s*[^\n]*(?:Next|Steps|Recommended|To Do|What To)[^\n]*\n(.*?)(?=##|\Z)",
     }
 
     for key, pat in patterns.items():
         m = re.search(pat, text, re.DOTALL | re.IGNORECASE)
         if m:
             raw = m.group(1).strip()
-            bullets = re.findall(r"[-\u2022*]\s*(.+?)(?=\n\s*[-\u2022*]|\Z)", raw, re.DOTALL)
+            bullets = re.findall(r"[-•*]\s*(.+?)(?=\n\s*[-•*]|\Z)", raw, re.DOTALL)
             bullets = [
                 b.strip().replace("\n", " ")
                 for b in bullets
@@ -516,10 +519,11 @@ def parse_sections(text: str) -> dict:
                 and not b.strip().startswith("*AI")
                 and not b.strip().startswith("AI-gen")
                 and "not a medical" not in b.lower()
-                and "consult a qualified" not in b.lower()[:40]
+                and "consult a" not in b.lower()[:30]
             ]
             secs[key] = bullets if bullets else [raw[:280].strip()]
     return secs
+
 def render_response(text: str):
     secs = parse_sections(text)
     if not secs:
@@ -591,10 +595,17 @@ def render_pipeline(meta: dict, key: str):
     if not meta or meta.get("error"):
         return
 
-    # FIX: Only show pipeline for SYMPTOM_ANALYSIS and REPORT_OVERVIEW
-    # Hide for simple questions, report value queries, and action requests
+    # Only show pipeline for SYMPTOM_ANALYSIS and REPORT_OVERVIEW
+    # Hide for: simple questions, report queries, action requests, emergency
     intent = meta.get("intent", "SYMPTOM_ANALYSIS")
     if intent in ("SIMPLE_QUESTION", "ACTION_REQUEST", "REPORT_QUERY"):
+        return
+
+    # FIX 2: Hide pipeline for EMERGENCY responses
+    # Emergency skips most agents so showing empty pipeline is misleading
+    risk  = meta.get("risk", {})
+    level = risk.get("risk_level", "")
+    if level == "EMERGENCY":
         return
     has_symptoms = bool(meta.get("raw_symptoms") or meta.get("normalized_symptoms"))
     has_report   = bool(meta.get("report_analysis"))

@@ -17,32 +17,65 @@ _llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
 
 
 # ── Intent Classifier ─────────────────────────────────────────────────────────
-# This is the KEY addition. Before doing anything, we classify what the user
-# actually wants. This determines which path the graph takes.
-#
-# INTENT TYPES:
-#   SIMPLE_QUESTION   → "what is hypothyroidism", "what is TSH", "what is anemia"
-#   REPORT_QUERY      → "what is my cholesterol", "patient name", "my TSH value"
-#   SYMPTOM_ANALYSIS  → "I have fever", "I feel tired and breathless"
-#   ACTION_REQUEST    → "schedule appointment", "book a doctor"
-#   REPORT_OVERVIEW   → "check my report", "what's wrong in my report"
-
 def classify_intent(user_input: str, has_report: bool) -> str:
     """
     Classifies user intent using keyword rules first (fast),
     then falls back to LLM classification for ambiguous cases.
+
+    INTENT TYPES:
+      SIMPLE_QUESTION  → "what is hypothyroidism"
+      REPORT_QUERY     → "what is my cholesterol", "patient name"
+      SYMPTOM_ANALYSIS → "I have fever and chills"
+      ACTION_REQUEST   → "schedule appointment"
+      REPORT_OVERVIEW  → "check my report", "what's wrong"
+
+    FIX: If message contains BOTH symptoms AND report keywords,
+    SYMPTOM_ANALYSIS always wins so the user gets the full 4-section
+    structured response with cards — not just a plain paragraph.
     """
     text = user_input.lower().strip()
+    
+ # ── FIX: Catch follow-up confirmations FIRST before anything else ─────────
+    # These short words mean the user is replying to a previous bot question.
+    # Route to answer_query so the follow-up detection logic can handle them.
+    short_confirmations = [
+        "yes", "ok", "sure", "please", "yeah", "yep", "okay",
+        "go ahead", "tell me", "yes please", "no", "nope", "skip"
+    ]
+    if text in short_confirmations:
+        print(f"[Classifier] Short confirmation '{text}' → ACTION_REQUEST for follow-up handling")
+        return "ACTION_REQUEST"  # routes to answer_query_node which has follow-up detection
+    # ─────────────────────────────────────────────────────────────────────────
 
-    # ── Rule-based fast classification ───────────────────────────────────────
-
-    # Action requests — scheduling, booking
+    # ── Action requests ───────────────────────────────────────────────────────
     action_keywords = ["schedule", "book", "appointment", "set up appointment",
                        "book a doctor", "reserve"]
     if any(k in text for k in action_keywords):
         return "ACTION_REQUEST"
 
-    # Report overview — user wants full report summary
+    # ── FIX 1: Mixed message detection ───────────────────────────────────────
+    # If user describes symptoms AND mentions their report together,
+    # treat as SYMPTOM_ANALYSIS so they get the full structured card response.
+    # Example: "I feel tired and cold, check my report" → SYMPTOM_ANALYSIS
+    symptom_indicators = [
+        "i have", "i feel", "i am", "i've", "i am having",
+        "tired", "fatigue", "hair", "cold", "pain", "ache",
+        "fever", "breathless", "dizzy", "weak", "nausea",
+        "vomiting", "cough", "burning", "shaking", "chills",
+        "swelling", "rash", "bleeding", "headache", "tingling"
+    ]
+    report_mention_keywords = [
+        "check my report", "my report", "in my report",
+        "from my report", "what's wrong", "whats wrong"
+    ]
+    has_symptoms_in_text  = any(k in text for k in symptom_indicators)
+    has_report_mention    = any(k in text for k in report_mention_keywords)
+
+    if has_symptoms_in_text and has_report_mention and has_report:
+        print("[Classifier] Mixed symptom+report message → SYMPTOM_ANALYSIS")
+        return "SYMPTOM_ANALYSIS"
+
+    # ── Report overview ───────────────────────────────────────────────────────
     report_overview_keywords = ["check my report", "what's wrong", "whats wrong",
                                 "analyze my report", "read my report", "review my report",
                                 "tell me about my report", "what does my report say",
@@ -50,7 +83,7 @@ def classify_intent(user_input: str, has_report: bool) -> str:
     if any(k in text for k in report_overview_keywords):
         return "REPORT_OVERVIEW"
 
-    # Report-specific value queries — user asks about THEIR specific results
+    # ── Report-specific value queries ─────────────────────────────────────────
     my_value_keywords = ["my cholesterol", "my hemoglobin", "my tsh", "my t4",
                          "my vitamin", "my sugar", "my creatinine", "my uric",
                          "my wbc", "my rbc", "my platelets", "my ferritin",
@@ -63,18 +96,17 @@ def classify_intent(user_input: str, has_report: bool) -> str:
     if any(k in text for k in my_value_keywords):
         return "REPORT_QUERY"
 
-    # General medical education questions — no personal data involved
+    # ── General medical education ─────────────────────────────────────────────
     education_keywords = ["what is ", "what are ", "explain ", "define ",
                           "tell me about ", "how does ", "why is ", "what does ",
                           "meaning of ", "difference between ", "what causes ",
                           "how to treat ", "how to cure ", "is it dangerous",
                           "can it be cured", "is it serious"]
     if any(text.startswith(k) or k in text for k in education_keywords):
-        # Make sure they're not asking about THEIR values (already caught above)
         if "my " not in text:
             return "SIMPLE_QUESTION"
 
-    # Symptom descriptions — personal health complaints
+    # ── Symptom descriptions ──────────────────────────────────────────────────
     symptom_keywords = ["i have", "i am having", "i feel", "i am feeling",
                         "i've been", "i've had", "since yesterday", "since morning",
                         "since last", "for the past", "for 2 days", "for 3 days",
@@ -85,7 +117,7 @@ def classify_intent(user_input: str, has_report: bool) -> str:
     if any(k in text for k in symptom_keywords):
         return "SYMPTOM_ANALYSIS"
 
-    # ── LLM fallback for ambiguous cases ─────────────────────────────────────
+    # ── LLM fallback ──────────────────────────────────────────────────────────
     try:
         response = _llm.invoke([HumanMessage(content=f"""Classify this health assistant message into exactly one category.
 
@@ -93,13 +125,13 @@ Message: "{user_input}"
 Has medical report uploaded: {has_report}
 
 Categories:
-- SIMPLE_QUESTION: General medical education (what is diabetes, explain anemia, how does thyroid work)
-- REPORT_QUERY: Asking about specific values in their uploaded report (what is my cholesterol, patient name, my TSH level)
-- SYMPTOM_ANALYSIS: Describing personal symptoms they are experiencing (I have fever, I feel tired)
-- ACTION_REQUEST: Wants to do something like schedule appointment, book doctor
-- REPORT_OVERVIEW: Wants full report summary/analysis (check my report, what's wrong)
+- SIMPLE_QUESTION: General medical education (what is diabetes, explain anemia)
+- REPORT_QUERY: Asking about specific values in their report (what is my cholesterol, patient name)
+- SYMPTOM_ANALYSIS: Describing personal symptoms (I have fever, I feel tired)
+- ACTION_REQUEST: Wants to book/schedule something
+- REPORT_OVERVIEW: Wants full report summary (check my report, what's wrong)
 
-Reply with ONLY one word: SIMPLE_QUESTION, REPORT_QUERY, SYMPTOM_ANALYSIS, ACTION_REQUEST, or REPORT_OVERVIEW""")])
+Reply with ONLY one word.""")])
         intent = response.content.strip().upper()
         if intent in ["SIMPLE_QUESTION", "REPORT_QUERY", "SYMPTOM_ANALYSIS",
                       "ACTION_REQUEST", "REPORT_OVERVIEW"]:
@@ -107,7 +139,6 @@ Reply with ONLY one word: SIMPLE_QUESTION, REPORT_QUERY, SYMPTOM_ANALYSIS, ACTIO
     except:
         pass
 
-    # Default fallback
     return "SYMPTOM_ANALYSIS"
 
 
@@ -126,7 +157,6 @@ def supervisor_node(state: HealthAgentState) -> dict:
             "intent": "ERROR"
         }
 
-    # Classify intent
     intent = classify_intent(user_input, has_report)
     print(f"[Supervisor] Detected intent: {intent}")
 
@@ -141,44 +171,36 @@ def supervisor_node(state: HealthAgentState) -> dict:
     }
 
 
-# ── Route Entry — based on intent ─────────────────────────────────────────────
+# ── Route Entry ────────────────────────────────────────────────────────────────
 def route_entry(state: HealthAgentState) -> str:
     intent     = state.get("intent", "SYMPTOM_ANALYSIS")
     has_report = state.get("has_report", False)
 
     print(f"[Router] Intent={intent}, has_report={has_report}")
 
-    # Action requests → direct answer, no pipeline needed
     if intent == "ACTION_REQUEST":
+        # FIX: If report uploaded, analyze it first so follow-up
+        # specialist recommendations have actual report data
+        if has_report:
+            return "analyze_report"   # ← was "answer_query" before
         return "answer_query"
 
-    # Simple educational question → direct answer, no pipeline needed
     if intent == "SIMPLE_QUESTION":
         return "answer_query"
 
-    # User asking about their specific report values → need report first
     if intent == "REPORT_QUERY":
-        if has_report:
-            return "analyze_report"
-        return "answer_query"  # no report uploaded, tell them
+        return "analyze_report" if has_report else "answer_query"
 
-    # Full report overview → analyze report then full pipeline
     if intent == "REPORT_OVERVIEW":
-        if has_report:
-            return "analyze_report"
-        return "answer_query"
+        return "analyze_report" if has_report else "answer_query"
 
-    # Symptom analysis → full pipeline
     if intent == "SYMPTOM_ANALYSIS":
-        if has_report:
-            return "analyze_report"  # analyze report first, then symptoms
-        return "extract_symptoms"
+        return "analyze_report" if has_report else "extract_symptoms"
 
     return "extract_symptoms"
 
 
 # ── Direct Answer Node ─────────────────────────────────────────────────────────
-# Handles: SIMPLE_QUESTION, ACTION_REQUEST, REPORT_QUERY (without going through full pipeline)
 def answer_query_node(state: HealthAgentState) -> dict:
     user_input      = state.get("user_input", "").strip()
     intent          = state.get("intent", "SIMPLE_QUESTION")
@@ -188,9 +210,7 @@ def answer_query_node(state: HealthAgentState) -> dict:
 
     print(f"  [Node] AnswerQuery running for intent: {intent}")
 
-    # ── FOLLOW-UP DETECTION ───────────────────────────────────────────────────
-    # If user says "yes", "ok", "sure", "please" etc — check last bot message
-    # and answer THAT question instead of treating it as a new query
+    # ── Follow-up detection ("yes", "ok", "sure") ─────────────────────────────
     short_confirmations = ["yes", "ok", "sure", "please", "yeah", "yep",
                            "okay", "go ahead", "tell me", "yes please"]
     if user_input.lower().strip() in short_confirmations:
@@ -202,20 +222,47 @@ def answer_query_node(state: HealthAgentState) -> dict:
                 break
 
         if last_bot_msg and "?" in last_bot_msg:
-            # Find the question the bot asked and answer it
+            # Build report context so specialist recommendations are accurate
+            report_context = "No report uploaded."
+            if report_analysis:
+                key_findings = report_analysis.get("key_findings") or []
+                abnormal     = report_analysis.get("abnormal_findings") or []
+                if key_findings:
+                    # Get only abnormal findings with actual values
+                    abnormal_lines = [
+                        f"{kf.get('parameter')}: {kf.get('value')} "
+                        f"(Normal: {kf.get('normal_range')}) [{kf.get('status')}] — {kf.get('significance','')}"
+                        for kf in key_findings
+                        if kf.get("status") in ("LOW", "HIGH", "ABNORMAL")
+                    ]
+                    report_context = "".join(abnormal_lines) if abnormal_lines else "All values normal"
+                elif abnormal:
+                    report_context = ", ".join(abnormal)
+
             response = _llm.invoke([
-                SystemMessage(content="""You are a medical assistant. The patient is saying 'yes' to your previous question.
-Look at your previous message, identify the question you asked, and answer it helpfully.
-Be concise and direct. Sound like a doctor responding to a patient."""),
-                HumanMessage(content=f"""Your previous message: "{last_bot_msg}"
+                SystemMessage(content="""You are a medical doctor answering a patient's follow-up question.
+The patient confirmed 'yes' to your previous question — answer it specifically.
 
-The patient replied: "{user_input}"
+CRITICAL: If recommending specialists, use the REPORT DATA to name the CORRECT ones:
+- Low Hemoglobin / Iron / Ferritin → Hematologist
+- High TSH / Low T4 / Anti-TPO → Endocrinologist  
+- Bacteria in Urine / UTI → Urologist or General Physician
+- High Cholesterol / Lipids → Cardiologist or General Physician
+- Low Vitamin D / B12 → General Physician or Endocrinologist
 
-They are confirming yes to your question. Please answer the question you asked them.""")
+Always recommend based on what the report actually shows.
+Be specific, warm, and concise. 3-5 sentences maximum."""),
+                HumanMessage(content=f"""Your previous question to the patient: "{last_bot_msg}"
+Patient replied: "{user_input}"
+
+Patient's report abnormal findings:
+{report_context}
+
+Answer the question you asked, recommending the RIGHT specialists based on the report data above.""")
             ])
             return {"final_response": response.content.strip()}
 
-    # ── ACTION REQUEST ────────────────────────────────────────────────────────
+    # ── Action request ────────────────────────────────────────────────────────
     if intent == "ACTION_REQUEST":
         text = user_input.lower()
         if any(k in text for k in ["schedule", "appointment", "book"]):
@@ -227,10 +274,9 @@ They are confirming yes to your question. Please answer the question you asked t
                 "3. Try apps like Practo or Apollo 247 for online appointments\n\n"
                 "Would you like me to tell you which specialist to see based on your report?"
             )}
-        # Generic action
         return {"final_response": "I can't perform that action directly, but I can answer health questions or analyze your medical report."}
 
-    # ── NO REPORT uploaded but user asked about report ────────────────────────
+    # ── No report uploaded ────────────────────────────────────────────────────
     if intent == "REPORT_QUERY" and not has_report:
         return {"final_response": (
             "It looks like you haven't uploaded a medical report yet. "
@@ -238,31 +284,24 @@ They are confirming yes to your question. Please answer the question you asked t
             "then ask your question again."
         )}
 
-    # ── SIMPLE EDUCATIONAL QUESTION ───────────────────────────────────────────
+    # ── Simple educational question ───────────────────────────────────────────
     if intent == "SIMPLE_QUESTION":
         response = _llm.invoke([
             SystemMessage(content="""You are a knowledgeable medical doctor explaining things to a patient.
-Answer the question clearly and conversationally — like a doctor talking to a patient in a clinic.
-
-Rules:
+Answer clearly and conversationally — like a doctor in a clinic.
 - Give a direct, focused answer to exactly what was asked
-- Use simple language, avoid heavy jargon
-- Keep it concise — 3 to 6 sentences max
-- Do NOT add self-care tips, warning signs, or next steps unless specifically asked
-- Do NOT use bullet points for simple explanations — use natural flowing sentences
-- End with one short practical note if relevant
-- Always add: "If you have concerns, speak with your doctor." at the end"""),
+- Use simple language, 3 to 6 sentences max
+- No self-care tips, warning signs, or next steps unless asked
+- No bullet points — use natural sentences
+- End with: "If you have concerns, speak with your doctor." """),
             HumanMessage(content=user_input)
         ])
         return {"final_response": response.content.strip()}
 
-    # ── REPORT QUERY — specific value from report ─────────────────────────────
+    # ── Report value query ────────────────────────────────────────────────────
     if intent == "REPORT_QUERY" and report_analysis:
-
-        # Build rich context from report
         context_parts = []
 
-        # Add key findings with exact values
         key_findings = report_analysis.get("key_findings", [])
         if key_findings:
             findings_text = "\n".join([
@@ -270,56 +309,38 @@ Rules:
                 f"[{kf.get('status')}] — {kf.get('significance', '')}"
                 for kf in key_findings
             ])
-            context_parts.append(f"Key findings from report:\n{findings_text}")
+            context_parts.append(f"Key findings:\n{findings_text}")
 
-        # Add patient info if available
         if report_analysis.get("patient_name"):
             context_parts.append(f"Patient name: {report_analysis.get('patient_name')}")
 
-        # Add raw report text for name/age extraction
         if report_data and isinstance(report_data, str):
-            context_parts.append(f"Report text excerpt:\n{report_data[:2000]}")
+            context_parts.append(f"Report text:\n{report_data[:2000]}")
 
-        # Add summary
         if report_analysis.get("summary"):
-            context_parts.append(f"Report summary: {report_analysis.get('summary')}")
+            context_parts.append(f"Summary: {report_analysis.get('summary')}")
 
         context = "\n\n".join(context_parts)
 
         response = _llm.invoke([
-            SystemMessage(content="""You are a medical doctor reviewing a patient's report with them.
-Answer their specific question directly using the report data provided.
-
-Rules:
-- Answer ONLY what was asked — do not add unrelated information
-- Quote exact values from the report (e.g., "Your LDL is 138 mg/dL, normal is below 100")
-- Explain what the value means in 1-2 simple sentences
-- If the value is normal, reassure them. If abnormal, note it calmly
-- Do NOT give full health advice, self-care tips, or next steps unless asked
-- Sound like a doctor talking naturally to their patient
-- Keep response to 3-5 sentences maximum
-- End with: "Let me know if you have more questions about your report." """),
-            HumanMessage(content=f"Patient question: {user_input}\n\nReport data:\n{context}")
+            SystemMessage(content="""You are a medical doctor reviewing a patient's report.
+Answer ONLY what was asked. Quote exact values from the report.
+Keep to 3-5 sentences. End with: "Let me know if you have more questions about your report." """),
+            HumanMessage(content=f"Question: {user_input}\n\nReport data:\n{context}")
         ])
         return {"final_response": response.content.strip()}
 
-    # Fallback
     return {"final_response": "I'm not sure how to answer that. Could you rephrase or upload your medical report?"}
 
 
-# ── After report analysis — route based on original intent ───────────────────
+# ── After report analysis routing ─────────────────────────────────────────────
 def route_after_report(state: HealthAgentState) -> str:
     intent = state.get("intent", "SYMPTOM_ANALYSIS")
 
-    # For simple report queries — go to answer_query with report context now loaded
     if intent in ("REPORT_QUERY", "ACTION_REQUEST"):
         return "answer_query"
 
-    # For report overview — generate full advice using report
-    if intent == "REPORT_OVERVIEW":
-        return "extract_symptoms"
-
-    # For symptom analysis with report — proceed to symptom extraction
+    # REPORT_OVERVIEW and SYMPTOM_ANALYSIS both go through full pipeline
     return "extract_symptoms"
 
 
@@ -333,9 +354,8 @@ def emergency_response_node(state: HealthAgentState) -> dict:
     messages = [
         SystemMessage(content="""You are an emergency medical triage assistant.
 The patient has EMERGENCY-level symptoms. Respond like an urgent doctor.
-Be direct, clear, and calm but serious.
-Tell them exactly what to do right now.
-Do NOT use bullet point lists — speak naturally and urgently.
+Be direct, clear, and serious. Tell them exactly what to do right now.
+Do NOT use bullet points — speak naturally and urgently.
 End with the medical disclaimer."""),
         HumanMessage(content=f"""
 Symptoms: {', '.join(symptoms)}
@@ -348,16 +368,12 @@ Action needed: {risk.get('action', 'Call emergency services immediately')}
     return {"final_response": f"🚨 **EMERGENCY — Call for help immediately**\n\n{response.content}"}
 
 
-# ── Conditional Routing Functions ─────────────────────────────────────────────
+# ── Conditional Routing ───────────────────────────────────────────────────────
 def route_after_extraction(state: HealthAgentState) -> str:
     has_report   = state.get("has_report", False)
     has_symptoms = bool(state.get("raw_symptoms"))
     error        = state.get("error", False)
     intent       = state.get("intent", "SYMPTOM_ANALYSIS")
-
-    # Report overview with no symptoms — still run pipeline for report-based advice
-    if not has_symptoms and has_report and intent == "REPORT_OVERVIEW":
-        return "normalize_symptoms"
 
     if not has_symptoms and has_report:
         return "normalize_symptoms"
@@ -380,18 +396,17 @@ def route_by_risk_level(state: HealthAgentState) -> str:
     return "generate_advice"
 
 
-# ── Error Termination Node ────────────────────────────────────────────────────
+# ── Error Node ────────────────────────────────────────────────────────────────
 def end_with_error_node(state: HealthAgentState) -> dict:
     return {"final_response": state.get("error_message",
         "I couldn't identify any symptoms. Please describe what you're feeling, "
         "for example: 'I have fever and headache since yesterday.'")}
 
 
-# ── Build the Graph ───────────────────────────────────────────────────────────
+# ── Build Graph ───────────────────────────────────────────────────────────────
 def build_health_graph():
     graph = StateGraph(HealthAgentState)
 
-    # Register nodes
     graph.add_node("supervisor",         supervisor_node)
     graph.add_node("analyze_report",     report_analysis_node)
     graph.add_node("answer_query",       answer_query_node)
@@ -403,13 +418,10 @@ def build_health_graph():
     graph.add_node("emergency_response", emergency_response_node)
     graph.add_node("end_with_error",     end_with_error_node)
 
-    # Entry
     graph.add_edge(START, "supervisor")
 
-    # After supervisor — route by intent
     graph.add_conditional_edges(
-        "supervisor",
-        route_entry,
+        "supervisor", route_entry,
         {
             "analyze_report":   "analyze_report",
             "extract_symptoms": "extract_symptoms",
@@ -417,23 +429,18 @@ def build_health_graph():
         }
     )
 
-    # After report analysis — route based on intent
     graph.add_conditional_edges(
-        "analyze_report",
-        route_after_report,
+        "analyze_report", route_after_report,
         {
             "answer_query":     "answer_query",
             "extract_symptoms": "extract_symptoms"
         }
     )
 
-    # Direct query → END
     graph.add_edge("answer_query", END)
 
-    # Symptom pipeline
     graph.add_conditional_edges(
-        "extract_symptoms",
-        route_after_extraction,
+        "extract_symptoms", route_after_extraction,
         {
             "end_with_error":     "end_with_error",
             "normalize_symptoms": "normalize_symptoms"
@@ -445,8 +452,7 @@ def build_health_graph():
     graph.add_edge("predict_disease",    "assess_risk")
 
     graph.add_conditional_edges(
-        "assess_risk",
-        route_by_risk_level,
+        "assess_risk", route_by_risk_level,
         {
             "emergency_response": "emergency_response",
             "generate_advice":    "generate_advice"
@@ -459,5 +465,4 @@ def build_health_graph():
     return graph.compile()
 
 
-# Singleton
 health_graph = build_health_graph()
