@@ -28,6 +28,8 @@ st.set_page_config(
 
 if "messages"   not in st.session_state: st.session_state.messages   = []
 if "open_pipes" not in st.session_state: st.session_state.open_pipes = {}
+if "diagnostic_phase"  not in st.session_state: st.session_state.diagnostic_phase  = None
+if "question_count"    not in st.session_state: st.session_state.question_count    = 0
 
 st.markdown("""
 <style>
@@ -707,7 +709,20 @@ with st.sidebar:
     if st.button("Clear Conversation", use_container_width=True, key="clear_btn"):
         st.session_state.messages = []
         st.session_state.open_pipes = {}
+        st.session_state.diagnostic_phase = None
+        st.session_state.question_count = 0
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # ── Diagnostic Interview Toggle ───────────────────────────────────────
+    st.markdown('<div class="sb-sec">', unsafe_allow_html=True)
+    st.markdown('<div class="sb-lbl">Features</div>', unsafe_allow_html=True)
+    diagnostic_enabled = st.toggle(
+        "🩺 Diagnostic Interview",
+        value=False,
+        key="diagnostic_toggle",
+        help="When enabled, the assistant asks follow-up questions for vague symptoms before diagnosing."
+    )
     st.markdown('</div>', unsafe_allow_html=True)
   
 # ══════════════════════════════════════════════════════════
@@ -764,53 +779,73 @@ st.markdown('</div>', unsafe_allow_html=True)
 # INPUT
 # ══════════════════════════════════════════════════════════
 if user_input := st.chat_input("Describe your symptoms or ask about your report..."):
-    report_data, report_type = process_uploaded_file(uploaded_file)
-    has_report = report_data is not None
-    display_msg = user_input + (f"\n\n`📎 {uploaded_file.name}`" if has_report else "")
+    # ── Guardrails: validate input ────────────────────────────────────────
+    from agents.guardrails import validate_input, sanitize_input
+    is_valid, error_msg = validate_input(user_input)
+    if not is_valid:
+        with st.chat_message("assistant", avatar="⚕️"):
+            st.warning(error_msg)
+        st.session_state.messages.append({"role": "assistant", "content": error_msg, "meta": None})
+    else:
+        user_input = sanitize_input(user_input)
+        report_data, report_type = process_uploaded_file(uploaded_file)
+        has_report = report_data is not None
+        display_msg = user_input + (f"\n\n`📎 {uploaded_file.name}`" if has_report else "")
 
-    st.session_state.messages.append({"role": "user", "content": display_msg, "meta": None})
-    with st.chat_message("user", avatar="👤"):
-        st.markdown(display_msg)
+        st.session_state.messages.append({"role": "user", "content": display_msg, "meta": None})
+        with st.chat_message("user", avatar="👤"):
+            st.markdown(display_msg)
 
-    with st.chat_message("assistant", avatar="⚕️"):
-        from groq import RateLimitError
+        with st.chat_message("assistant", avatar="⚕️"):
+            from groq import RateLimitError
 
-        # Build conversation context — last 6 messages for follow-up awareness
-        # This lets the model understand "yes" replies to its own questions
-        recent_history = st.session_state.messages[-6:] if st.session_state.messages else []
-        chat_history_for_graph = [
-            {"role": m["role"], "content": m["content"]}
-            for m in recent_history
-        ]
+            # Build conversation context — last 6 messages for follow-up awareness
+            recent_history = st.session_state.messages[-6:] if st.session_state.messages else []
+            chat_history_for_graph = [
+                {"role": m["role"], "content": m["content"]}
+                for m in recent_history
+            ]
 
-        with st.spinner("Analyzing..." if has_report else "Running pipeline..."):
-            try:
-                final_state = health_graph.invoke({
-                    "user_input":   user_input,
-                    "has_report":   has_report,
-                    "report_data":  report_data,
-                    "report_type":  report_type,
-                    "chat_history": chat_history_for_graph,
-                    "error":        False
-                })
+            with st.spinner("Analyzing..." if has_report else "Running pipeline..."):
+                try:
+                    final_state = health_graph.invoke({
+                        "user_input":   user_input,
+                        "has_report":   has_report,
+                        "report_data":  report_data,
+                        "report_type":  report_type,
+                        "chat_history": chat_history_for_graph,
+                        "error":        False,
+                        "enable_diagnostic_interview": st.session_state.get("diagnostic_toggle", False),
+                        "question_count": st.session_state.question_count,
+                    })
 
-            except RateLimitError:
-                final_state = {
-                    "final_response": "⚠️ API rate limit reached. Please wait a moment and try again."
-                }
+                except RateLimitError:
+                    final_state = {
+                        "final_response": "⚠️ API rate limit reached. Please wait a moment and try again."
+                    }
 
-        response_text = final_state.get("final_response", "Something went wrong. Please try again.")
-        render_response(response_text)
+            # Track diagnostic phase
+            diag_phase = final_state.get("diagnostic_phase")
+            if diag_phase == "COLLECTING":
+                st.session_state.diagnostic_phase = "COLLECTING"
+                st.session_state.question_count = final_state.get("question_count", 0)
+            else:
+                st.session_state.diagnostic_phase = None
+                st.session_state.question_count = 0
 
-        meta = {
-            "error":               final_state.get("error", False),
-            "intent":              final_state.get("intent", "SYMPTOM_ANALYSIS"),
-            "raw_symptoms":        final_state.get("raw_symptoms") or [],
-            "normalized_symptoms": final_state.get("normalized_symptoms") or [],
-            "conditions":          final_state.get("predicted_conditions") or [],
-            "risk":                final_state.get("risk_assessment") or {},
-            "report_analysis":     final_state.get("report_analysis"),
-        }
-        idx = len(st.session_state.messages)
-        render_pipeline(meta, key=str(idx))
-        st.session_state.messages.append({"role": "assistant", "content": response_text, "meta": meta})
+            response_text = final_state.get("final_response", "Something went wrong. Please try again.")
+            render_response(response_text)
+
+            meta = {
+                "error":               final_state.get("error", False),
+                "intent":              final_state.get("intent", "SYMPTOM_ANALYSIS"),
+                "raw_symptoms":        final_state.get("raw_symptoms") or [],
+                "normalized_symptoms": final_state.get("normalized_symptoms") or [],
+                "conditions":          final_state.get("predicted_conditions") or [],
+                "risk":                final_state.get("risk_assessment") or {},
+                "report_analysis":     final_state.get("report_analysis"),
+                "ml_predictions":      final_state.get("ml_predictions") or [],
+            }
+            idx = len(st.session_state.messages)
+            render_pipeline(meta, key=str(idx))
+            st.session_state.messages.append({"role": "assistant", "content": response_text, "meta": meta})

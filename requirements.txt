@@ -5,3 +5,9 @@ streamlit
 python-dotenv
 PyPDF2
 langchain_google_genai
+chromadb
+sentence-transformers
+scikit-learn
+pandas
+numpy
+pytest

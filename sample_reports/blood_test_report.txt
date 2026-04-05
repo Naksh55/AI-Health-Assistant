@@ -1,0 +1,65 @@
+PATHOLOGY REPORT
+================================
+Lab: City Diagnostics Pvt. Ltd.
+Date: 04-Apr-2026
+Patient: Rahul Sharma  |  Age: 28 Years  |  Sex: Male
+Ref. By: Dr. Ankit Patel
+
+COMPLETE BLOOD COUNT (CBC)
+-------------------------------------------------------
+Parameter           Result      Unit       Normal Range
+-------------------------------------------------------
+Hemoglobin          7.8         g/dL       13.0 - 17.0    LOW
+RBC Count           3.2         million    4.5 - 5.5      LOW
+WBC Count           11200       /cumm      4000 - 11000   HIGH
+Platelet Count      145000      /cumm      150000-400000  LOW
+MCV                 68.4        fL         80 - 100       LOW
+MCH                 22.1        pg         27 - 32        LOW
+MCHC                30.2        g/dL       32 - 36        LOW
+PCV/Hematocrit      28.5        %          40 - 54        LOW
+RDW                 18.2        %          11.5 - 14.5    HIGH
+
+IRON STUDIES
+-------------------------------------------------------
+Serum Iron          28          ug/dL      65 - 175       LOW
+Ferritin            8.2         ng/mL      20 - 200       LOW
+TIBC                480         ug/dL      250 - 400      HIGH
+Transferrin Sat.    5.8         %          20 - 50        LOW
+
+THYROID PROFILE
+-------------------------------------------------------
+TSH                 8.92        mIU/L      0.4 - 4.0      HIGH
+Free T4             0.6         ng/dL      0.8 - 1.8      LOW
+Free T3             1.8         pg/mL      2.3 - 4.2      LOW
+
+LIVER FUNCTION TEST
+-------------------------------------------------------
+Bilirubin Total     0.9         mg/dL      0.3 - 1.2      NORMAL
+SGOT (AST)          28          U/L        0 - 40         NORMAL
+SGPT (ALT)          32          U/L        0 - 41         NORMAL
+Alkaline Phosph.    75          U/L        44 - 147       NORMAL
+
+LIPID PROFILE
+-------------------------------------------------------
+Total Cholesterol   242         mg/dL      < 200          HIGH
+LDL Cholesterol     168         mg/dL      < 100          HIGH
+HDL Cholesterol     34          mg/dL      > 40           LOW
+Triglycerides       285         mg/dL      < 150          HIGH
+VLDL                57          mg/dL      < 30           HIGH
+
+KIDNEY FUNCTION
+-------------------------------------------------------
+Creatinine          0.9         mg/dL      0.7 - 1.3      NORMAL
+BUN                 14          mg/dL      7 - 20         NORMAL
+Uric Acid           5.8         mg/dL      3.5 - 7.2      NORMAL
+
+BLOOD SUGAR
+-------------------------------------------------------
+Fasting Glucose     128         mg/dL      70 - 100       HIGH
+HbA1c               6.8         %          < 5.7          HIGH
+
+================================
+IMPRESSION: Severe iron deficiency anemia with concurrent 
+hypothyroidism, dyslipidemia, and pre-diabetic state.
+Recommend immediate clinical evaluation.
+================================

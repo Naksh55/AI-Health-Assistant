@@ -1,0 +1,45 @@
+URINE ANALYSIS REPORT
+================================
+Lab: Apollo Diagnostics
+Date: 03-Apr-2026
+Patient: Priya Gupta  |  Age: 35 Years  |  Sex: Female
+Ref. By: Dr. Meena Singh
+
+PHYSICAL EXAMINATION
+-------------------------------------------------------
+Color               Dark Yellow
+Appearance          Turbid                     ABNORMAL
+Specific Gravity    1.032       1.005-1.030    HIGH
+pH                  5.0         4.5-8.0        NORMAL
+
+CHEMICAL EXAMINATION
+-------------------------------------------------------
+Protein             ++          Negative       ABNORMAL
+Glucose             +++         Negative       ABNORMAL
+Ketones             +           Negative       ABNORMAL
+Blood               ++          Negative       ABNORMAL
+Bilirubin           Negative    Negative       NORMAL
+Urobilinogen        Normal      Normal         NORMAL
+Nitrite             Positive    Negative       ABNORMAL
+Leukocyte Esterase  Positive    Negative       ABNORMAL
+
+MICROSCOPIC EXAMINATION
+-------------------------------------------------------
+Pus Cells           25-30       /HPF       0-5     HIGH
+RBC                 8-10        /HPF       0-2     HIGH
+Epithelial Cells    4-6         /HPF       0-5     NORMAL
+Casts               Granular casts seen          ABNORMAL
+Crystals            Calcium Oxalate seen         PRESENT
+Bacteria            Moderate                     ABNORMAL
+
+CULTURE SENSITIVITY (if requested)
+-------------------------------------------------------
+Organism: E. coli
+Colony Count: >100,000 CFU/mL (Significant)
+
+================================
+IMPRESSION: Findings suggestive of urinary tract infection
+with possible renal involvement. Proteinuria and glycosuria
+noted — recommend further evaluation for diabetes and
+kidney function assessment.
+================================

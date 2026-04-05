@@ -72,27 +72,56 @@ chain = prompt | llm | StrOutputParser()
 
 def disease_prediction_node(state: HealthAgentState) -> dict:
     """
-    LangGraph Node: Disease Prediction
+    LangGraph Node: Disease Prediction (HYBRID ML + LLM)
 
     Input  (from state): state["normalized_symptoms"] + state["report_analysis"]
-    Output (to state)  : {"predicted_conditions": [...]}
+    Output (to state)  : {"predicted_conditions": [...], "ml_predictions": [...]}
 
-    KEY CHANGE: now reads report_analysis from state and injects
-    abnormal findings into the prompt for accurate diagnosis.
+    HYBRID APPROACH:
+      1. Run ML model (RandomForest) for statistical prediction
+      2. Pass ML predictions + report data as context to LLM
+      3. LLM validates/refines ML predictions with clinical reasoning
+      4. Final output combines both — ML gives backing, LLM gives reasoning
     """
     print("  [Node] DiseasePredictor running...")
 
     normalized      = state.get("normalized_symptoms", []) or []
+    raw_symptoms    = state.get("raw_symptoms", []) or []
     report_analysis = state.get("report_analysis")
 
-    # ── Build report section for the prompt ──────────────────────────────────
+    # ── Step 1: ML Model Prediction ──────────────────────────────────────────
+    ml_predictions = []
+    ml_context = "No ML model predictions available."
+    try:
+        from ml.predictor import MLDiseasePredictor
+        predictor = MLDiseasePredictor()
+        # Combine raw + normalized symptoms for best matching coverage
+        # Raw symptoms match Kaggle features directly ("headache", "back_pain")
+        # Normalized symptoms get mapped via synonym dictionary ("dysuria" → "burning_micturition")
+        combined_symptoms = list(set(raw_symptoms + normalized))
+        if predictor.is_ready and combined_symptoms:
+            ml_predictions = predictor.predict(combined_symptoms, top_k=3)
+            if ml_predictions:
+                ml_lines = [
+                    f"  - {p['name']} (ML confidence: {p['ml_confidence']}, "
+                    f"probability: {p['probability']:.1%})"
+                    for p in ml_predictions
+                ]
+                ml_context = (
+                    "ML Model Predictions (RandomForest, use as statistical reference):\n"
+                    + "\n".join(ml_lines)
+                )
+                print(f"  [Node] ML predictions: {[p['name'] for p in ml_predictions]}")
+    except Exception as e:
+        print(f"  [Node] ML prediction skipped: {e}")
+
+    # ── Step 2: Build report section for the prompt ──────────────────────────
     report_section = ""
     if report_analysis:
         abnormal    = report_analysis.get("abnormal_findings", [])
         key_findings = report_analysis.get("key_findings", [])
 
         if key_findings:
-            # Use detailed key findings with actual values
             lines = []
             for kf in key_findings:
                 param  = kf.get("parameter", "")
@@ -106,7 +135,6 @@ def disease_prediction_node(state: HealthAgentState) -> dict:
                 + "\n".join(lines)
             )
         elif abnormal:
-            # Fallback to just abnormal list
             report_section = (
                 "Medical Report — Abnormal Findings (USE THESE AS PRIMARY DIAGNOSIS BASIS):\n"
                 + "\n".join([f"  - {f}" for f in abnormal])
@@ -117,13 +145,17 @@ def disease_prediction_node(state: HealthAgentState) -> dict:
 
     # ── Handle no symptoms case ───────────────────────────────────────────────
     if not normalized and not report_analysis:
-        return {"predicted_conditions": []}
+        return {"predicted_conditions": [], "ml_predictions": ml_predictions}
 
     symptoms_str = ", ".join(normalized) if normalized else "No specific symptoms described"
 
+    # ── Step 3: LLM Prediction (with ML context) ─────────────────────────────
+    # Inject ML predictions into the report_section so LLM considers them
+    combined_section = f"{report_section}\n\n{ml_context}"
+
     raw_text = chain.invoke({
         "symptoms":       symptoms_str,
-        "report_section": report_section
+        "report_section": combined_section
     })
 
     try:
@@ -133,5 +165,5 @@ def disease_prediction_node(state: HealthAgentState) -> dict:
     except json.JSONDecodeError:
         conditions = []
 
-    print(f"  [Node] Predicted: {[c.get('name') for c in conditions]}")
-    return {"predicted_conditions": conditions}
+    print(f"  [Node] Predicted (hybrid): {[c.get('name') for c in conditions]}")
+    return {"predicted_conditions": conditions, "ml_predictions": ml_predictions}

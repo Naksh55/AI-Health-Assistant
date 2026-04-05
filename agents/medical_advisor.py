@@ -85,6 +85,8 @@ Likely conditions:
 Exact report values for reference:
 {report_summary}
 
+{rag_context}
+
 Recent conversation context (for follow-up awareness):
 {conversation_context}
 
@@ -194,8 +196,25 @@ def medical_advice_node(state: HealthAgentState) -> dict:
     report_analysis = state.get("report_analysis")
     user_input      = state.get("user_input", "")
     chat_history    = state.get("chat_history") or []
+    normalized      = state.get("normalized_symptoms") or []
 
     print(f"  [Node] MedicalAdvisor running for intent: {intent}")
+
+    # ── RAG: Retrieve relevant medical knowledge ──────────────────────────────
+    rag_context = ""
+    try:
+        from agents.rag_engine import medical_rag
+        if medical_rag.is_ready:
+            rag_context = medical_rag.query(
+                symptoms=normalized,
+                conditions=conditions,
+                user_query=user_input,
+                k=4
+            )
+            if rag_context:
+                print(f"  [Node] RAG context retrieved ({len(rag_context)} chars)")
+    except Exception as e:
+        print(f"  [Node] RAG query skipped: {e}")
 
     # ── Conditions text ───────────────────────────────────────────────────────
     conditions_text = "\n".join([
@@ -267,13 +286,14 @@ Give a warm, natural doctor-style explanation.""")
     # ── SYMPTOM ANALYSIS — full 4-section structured response ─────────────────
     response = chain.invoke({
         "user_input":             user_input,
-        "symptoms":               ", ".join(state.get("normalized_symptoms") or []),
+        "symptoms":               ", ".join(normalized),
         "risk_level":             risk.get("risk_level", "MEDIUM"),
         "risk_reason":            risk.get("reason", ""),
         "risk_action":            risk.get("action", "Consult a healthcare provider"),
         "conditions_text":        conditions_text,
         "report_context":         report_context,
         "report_summary":         report_summary,
+        "rag_context":            rag_context,
         "conversation_context":   conversation_context,
     })
 

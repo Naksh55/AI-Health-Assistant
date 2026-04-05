@@ -1,0 +1,308 @@
+[
+  {
+    "topic": "Iron Deficiency Anemia",
+    "category": "blood_disorders",
+    "content": "Iron deficiency anemia occurs when the body lacks enough iron to produce hemoglobin. Normal hemoglobin range is 12-16 g/dL for women and 14-18 g/dL for men. Symptoms include fatigue, weakness, pale skin, shortness of breath, dizziness, and cold hands/feet. Treatment includes iron supplements (ferrous sulfate 325mg daily), iron-rich foods (red meat, spinach, lentils), and vitamin C to enhance absorption. Severe cases (Hb below 7 g/dL) may require IV iron or blood transfusion. Follow-up CBC recommended after 4-6 weeks of treatment.",
+    "source": "WHO Clinical Guidelines on Anemia, 2023"
+  },
+  {
+    "topic": "Hypothyroidism",
+    "category": "endocrine",
+    "content": "Hypothyroidism is an underactive thyroid gland. Normal TSH range is 0.4-4.0 mIU/L; elevated TSH with low Free T4 confirms diagnosis. Hashimoto's thyroiditis (autoimmune) is the most common cause, confirmed by elevated Anti-TPO antibodies. Symptoms include fatigue, weight gain, cold intolerance, constipation, dry skin, hair loss, and depression. Treatment is levothyroxine (starting dose 25-50 mcg/day), taken on empty stomach 30 minutes before breakfast. TSH should be rechecked every 6-8 weeks until stable. Untreated hypothyroidism can lead to myxedema coma in severe cases.",
+    "source": "American Thyroid Association Guidelines, 2024"
+  },
+  {
+    "topic": "Vitamin D Deficiency",
+    "category": "nutrition",
+    "content": "Vitamin D deficiency is defined as serum 25(OH)D below 20 ng/mL; insufficiency is 20-29 ng/mL; optimal is 30-100 ng/mL. Symptoms include bone pain, muscle weakness, fatigue, and mood changes. Risk factors include limited sun exposure, dark skin, obesity, and malabsorption disorders. Treatment: 50,000 IU weekly for 8 weeks (repletion), then 1000-2000 IU daily (maintenance). Dietary sources include fatty fish, fortified milk, egg yolks. Severe deficiency can cause osteomalacia in adults and rickets in children.",
+    "source": "Endocrine Society Clinical Practice Guidelines, 2023"
+  },
+  {
+    "topic": "Diabetes Type 2 Diagnosis and Management",
+    "category": "endocrine",
+    "content": "Type 2 diabetes diagnostic criteria: fasting glucose ≥126 mg/dL, HbA1c ≥6.5%, or 2-hour OGTT ≥200 mg/dL. Prediabetes: fasting glucose 100-125, HbA1c 5.7-6.4%. First-line treatment is metformin plus lifestyle modification (150 min/week exercise, Mediterranean diet). Target HbA1c is generally below 7%. Monitor for complications: retinopathy (annual eye exam), nephropathy (annual urine albumin), neuropathy (foot exam). Hypoglycemia symptoms: shakiness, sweating, confusion — treat with 15g fast carbs.",
+    "source": "ADA Standards of Medical Care in Diabetes, 2024"
+  },
+  {
+    "topic": "Hypertension Management",
+    "category": "cardiovascular",
+    "content": "Normal blood pressure is below 120/80 mmHg. Stage 1 hypertension: 130-139/80-89 mmHg. Stage 2: ≥140/90 mmHg. Hypertensive crisis: >180/120 mmHg (seek emergency care). First-line medications include ACE inhibitors, ARBs, calcium channel blockers, and thiazide diuretics. Lifestyle modifications: DASH diet, reduce sodium to <2300mg/day, regular exercise 150 min/week, limit alcohol, maintain healthy weight. Untreated hypertension increases risk of stroke, heart attack, kidney disease, and heart failure.",
+    "source": "ACC/AHA Hypertension Guidelines, 2023"
+  },
+  {
+    "topic": "Common Cold vs Flu vs COVID-19",
+    "category": "respiratory",
+    "content": "Common cold: gradual onset, runny nose, sneezing, mild cough, rarely fever. Treatment is supportive (rest, fluids, OTC decongestants). Influenza (flu): sudden onset, high fever (100-104°F), severe body aches, extreme fatigue, dry cough. Antivirals (oseltamivir) effective within 48 hours. COVID-19: fever, dry cough, loss of taste/smell, fatigue, difficulty breathing. Key differentiator is loss of taste/smell (highly specific for COVID). All three are viral; antibiotics are NOT effective. Seek emergency care for difficulty breathing, persistent chest pain, or confusion.",
+    "source": "CDC Respiratory Illness Guidelines, 2024"
+  },
+  {
+    "topic": "Chest Pain Evaluation",
+    "category": "emergency",
+    "content": "Chest pain requires urgent evaluation. Cardiac causes: crushing/squeezing pain, radiating to left arm/jaw, associated with sweating, nausea, shortness of breath — CALL 911 IMMEDIATELY. Non-cardiac causes include GERD (burning, worse after eating), musculoskeletal (reproducible with palpation), anxiety (tingling, hyperventilation), pulmonary embolism (sudden onset with tachycardia). Diagnostic workup: ECG within 10 minutes, troponin levels, chest X-ray. Risk factors for cardiac: age >45 male/>55 female, smoking, diabetes, hypertension, family history. Never ignore new-onset chest pain.",
+    "source": "AHA/ACC Chest Pain Guidelines, 2023"
+  },
+  {
+    "topic": "Stroke Recognition and Response",
+    "category": "emergency",
+    "content": "Use FAST criteria: Face drooping, Arm weakness, Speech difficulty, Time to call emergency. Additional signs: sudden severe headache, vision loss, confusion, difficulty walking. Ischemic stroke (87% of cases) — tPA must be given within 4.5 hours. Hemorrhagic stroke — surgical intervention may be needed. Risk factors: hypertension, atrial fibrillation, diabetes, smoking, high cholesterol. Post-stroke care includes antiplatelet therapy, statin therapy, blood pressure management, and rehabilitation. Every minute of delay costs ~1.9 million neurons.",
+    "source": "AHA/ASA Stroke Guidelines, 2024"
+  },
+  {
+    "topic": "Pneumonia",
+    "category": "respiratory",
+    "content": "Pneumonia is infection of the lung parenchyma. Symptoms: productive cough, fever, chills, difficulty breathing, chest pain (pleuritic). Community-acquired pneumonia (CAP) most common pathogen is Streptococcus pneumoniae. Diagnosis via chest X-ray showing consolidation, elevated WBC, procalcitonin. Treatment: amoxicillin for mild; azithromycin + beta-lactam for moderate. Hospitalization criteria (CURB-65): confusion, urea >7, respiratory rate >30, BP systolic <90, age ≥65. Complications include pleural effusion, empyema, sepsis. Vaccination (Pneumovax, Prevnar) recommended for elderly and immunocompromised.",
+    "source": "IDSA/ATS Community-Acquired Pneumonia Guidelines, 2023"
+  },
+  {
+    "topic": "Migraine Headache",
+    "category": "neurology",
+    "content": "Migraine is a primary headache disorder. Characteristics: unilateral, pulsating, moderate-severe intensity, lasting 4-72 hours. Associated symptoms: nausea, vomiting, photophobia (light sensitivity), phonophobia (sound sensitivity). Aura occurs in 25% of cases (visual disturbances). Acute treatment: triptans (sumatriptan), NSAIDs (ibuprofen 400-800mg), antiemetics. Preventive therapy (for ≥4 attacks/month): propranolol, topiramate, amitriptyline, CGRP inhibitors. Triggers include stress, sleep changes, alcohol, MSG, hormonal changes, dehydration. Keep a headache diary for pattern identification.",
+    "source": "American Headache Society Guidelines, 2023"
+  },
+  {
+    "topic": "Urinary Tract Infection",
+    "category": "urology",
+    "content": "UTI symptoms include burning urination (dysuria), frequency, urgency, cloudy/foul-smelling urine, suprapubic pain. E. coli causes 80% of cases. Diagnosis via urinalysis (positive leukocyte esterase, nitrites) and urine culture. Uncomplicated UTI treatment: nitrofurantoin 100mg BID x5 days or TMP-SMX x3 days. Complicated UTI (fever, flank pain) suggests pyelonephritis — needs fluoroquinolone or IV antibiotics. Prevention: adequate hydration, urinate after intercourse, cranberry products (limited evidence). Recurrent UTIs (≥3/year) may need prophylactic antibiotics.",
+    "source": "AUA/CUA/SUFU UTI Guidelines, 2023"
+  },
+  {
+    "topic": "Depression Screening and Treatment",
+    "category": "mental_health",
+    "content": "Major depressive disorder: persistent low mood or anhedonia for ≥2 weeks, plus 4+ of: sleep changes, appetite/weight changes, fatigue, guilt/worthlessness, concentration difficulty, psychomotor changes, suicidal ideation. PHQ-9 score ≥10 suggests moderate depression. First-line treatment: SSRIs (sertraline, escitalopram) + psychotherapy (CBT). Response takes 4-6 weeks. Continue medication for ≥6-12 months after remission. Emergency: suicidal ideation with plan → immediate psychiatric evaluation. Helplines: National Suicide Prevention Lifeline 988, Crisis Text Line text HOME to 741741.",
+    "source": "APA Clinical Practice Guidelines for Depression, 2023"
+  },
+  {
+    "topic": "Anxiety Disorders",
+    "category": "mental_health",
+    "content": "Generalized anxiety disorder (GAD): excessive worry about multiple topics for ≥6 months, with 3+ of: restlessness, fatigue, concentration difficulty, irritability, muscle tension, sleep disturbance. GAD-7 score ≥10 indicates moderate anxiety. Treatment: CBT (first-line), SSRIs/SNRIs, buspirone. Acute anxiety/panic: benzodiazepines short-term only (risk of dependence). Panic disorder: recurrent unexpected panic attacks with fear of future attacks. Lifestyle: regular exercise, sleep hygiene, limit caffeine/alcohol, mindfulness meditation.",
+    "source": "APA Practice Guidelines for Anxiety Disorders, 2023"
+  },
+  {
+    "topic": "Asthma",
+    "category": "respiratory",
+    "content": "Asthma is chronic airway inflammation with variable airflow obstruction. Symptoms: wheezing, shortness of breath, chest tightness, cough (worse at night). Diagnosis: spirometry showing FEV1/FVC <0.70 with ≥12% reversibility after bronchodilator. Treatment stepwise: Step 1 — SABA as needed. Step 2 — low-dose ICS. Step 3 — low-dose ICS + LABA. Step 4 — medium-dose ICS + LABA. Asthma action plan is essential. Triggers: allergens, exercise, cold air, smoke, infections. Emergency: peak flow <50% predicted, cannot speak in sentences, cyanosis — call 911.",
+    "source": "GINA Global Strategy for Asthma Management, 2024"
+  },
+  {
+    "topic": "Gastroesophageal Reflux Disease (GERD)",
+    "category": "gastroenterology",
+    "content": "GERD: chronic acid reflux causing heartburn (burning retrosternal pain), regurgitation, dysphagia. Diagnosis is clinical; upper endoscopy if alarm signs (weight loss, dysphagia, GI bleeding). Lifestyle modifications: elevate head of bed, avoid eating 3 hours before bed, lose weight, avoid trigger foods (spicy, acidic, caffeine, alcohol). Medications: PPIs (omeprazole 20mg before breakfast) for 8 weeks, then step down. Long-term PPI risks: vitamin B12 deficiency, magnesium deficiency, hip fractures. H. pylori testing recommended. Surgery (fundoplication) for refractory cases.",
+    "source": "ACG Clinical Guidelines for GERD, 2023"
+  },
+  {
+    "topic": "Kidney Stones",
+    "category": "urology",
+    "content": "Kidney stones (nephrolithiasis) present with severe unilateral flank pain (renal colic) radiating to groin, hematuria, nausea/vomiting. Types: calcium oxalate (80%), uric acid (10%), struvite (5%), cystine (1%). Diagnosis: CT KUB (non-contrast). Stones <5mm: 90% pass spontaneously with fluids and NSAIDs + tamsulosin (MET). Stones 5-10mm: 50% pass spontaneously. Stones >10mm: usually need lithotripsy (ESWL) or ureteroscopy. Prevention: drink 2.5L water daily, limit sodium, moderate calcium intake, reduce oxalate-rich foods.",
+    "source": "AUA/Endourology Society Kidney Stone Guidelines, 2023"
+  },
+  {
+    "topic": "Malaria",
+    "category": "infectious",
+    "content": "Malaria is caused by Plasmodium parasites transmitted by Anopheles mosquitoes. Symptoms: cyclic high fever with chills and rigors, sweating, headache, body aches, fatigue. P. falciparum causes severe malaria with cerebral involvement. Diagnosis: thick and thin blood smear, rapid diagnostic test (RDT). Treatment: uncomplicated — artemisinin-based combination therapy (ACT). Severe malaria — IV artesunate. Complications: cerebral malaria, severe anemia, renal failure, ARDS. Prevention: insecticide-treated nets, indoor spraying, chemoprophylaxis for travelers (atovaquone-proguanil, doxycycline, mefloquine).",
+    "source": "WHO Malaria Treatment Guidelines, 2024"
+  },
+  {
+    "topic": "Tuberculosis",
+    "category": "infectious",
+    "content": "Tuberculosis (TB) is caused by Mycobacterium tuberculosis. Symptoms: persistent cough >3 weeks, hemoptysis (coughing blood), night sweats, weight loss, fever. Diagnosis: chest X-ray, sputum AFB smear and culture, GeneXpert MTB/RIF, tuberculin skin test (PPD). Treatment: RIPE regimen — Rifampin, Isoniazid, Pyrazinamide, Ethambutol for 2 months, then Isoniazid + Rifampin for 4 months. Add pyridoxine (B6) with isoniazid. Directly Observed Therapy (DOT) recommended. Drug-resistant TB requires modified regimens. Contacts should be screened.",
+    "source": "WHO TB Treatment Guidelines, 2024"
+  },
+  {
+    "topic": "Fever Evaluation in Adults",
+    "category": "general",
+    "content": "Normal body temperature ranges 97.7-99.5°F (36.5-37.5°C). Fever defined as ≥100.4°F (38°C). Low-grade: 100.4-102.2°F; high: 102.2-104°F; hyperpyrexia: >104°F. Common causes: infections (viral most common), inflammatory conditions, malignancy. Red flags requiring emergency care: temperature >104°F, stiff neck/headache (meningitis), rash (meningococcemia), confusion, seizures, immunocompromised patient. Home management for mild fever: acetaminophen 500-1000mg or ibuprofen 400mg every 6-8 hours, adequate hydration, rest. Fever >3 days without obvious cause warrants medical evaluation.",
+    "source": "Harrison's Principles of Internal Medicine, 21st Edition"
+  },
+  {
+    "topic": "Heart Disease Risk Factors",
+    "category": "cardiovascular",
+    "content": "Major modifiable risk factors: hypertension, hyperlipidemia (LDL >130), diabetes, smoking, obesity, sedentary lifestyle. Non-modifiable: age (>45M, >55F), male sex, family history of premature CAD. Target LDL: <70 mg/dL for high risk, <100 for moderate risk. Statins are first-line for hyperlipidemia. Aspirin for secondary prevention (not routinely for primary). Lifestyle: Mediterranean diet, 150 min/week moderate exercise, smoking cessation, BMI <25, waist <40 inches (men) / <35 inches (women). Framingham Risk Score or ASCVD calculator for 10-year risk estimation.",
+    "source": "ACC/AHA Cardiovascular Prevention Guidelines, 2023"
+  },
+  {
+    "topic": "Allergic Reactions and Anaphylaxis",
+    "category": "emergency",
+    "content": "Mild allergic reaction: localized hives, itching, mild swelling — treat with antihistamines (cetirizine, diphenhydramine). Anaphylaxis is a severe, life-threatening reaction: generalized hives, throat swelling, difficulty breathing, hypotension, GI symptoms. TREATMENT: epinephrine IM (0.3-0.5mg of 1:1000) in lateral thigh — FIRST AND MOST IMPORTANT STEP. Call 911. Position: supine with legs elevated. Can repeat epinephrine every 5-15 minutes. Adjunct: H1/H2 blockers, corticosteroids, albuterol for bronchospasm. Observe 4-6 hours for biphasic reaction. All patients should carry EpiPen after first anaphylaxis.",
+    "source": "WAO Anaphylaxis Guidelines, 2023"
+  },
+  {
+    "topic": "COVID-19 Current Guidelines",
+    "category": "infectious",
+    "content": "COVID-19 caused by SARS-CoV-2. Current symptoms: fever, cough, fatigue, body aches, sore throat, congestion. Loss of taste/smell less common with newer variants. Testing: rapid antigen (less sensitive) or PCR. Mild cases: supportive care, hydration, rest, acetaminophen. High-risk patients: Paxlovid (nirmatrelvir/ritonavir) within 5 days of symptoms. Isolation: 5 days if symptoms improving and fever-free 24 hours. Long COVID: fatigue, brain fog, dyspnea persisting >4 weeks. Emergency: difficulty breathing, persistent chest pain, confusion, inability to stay awake.",
+    "source": "NIH COVID-19 Treatment Guidelines, 2024"
+  },
+  {
+    "topic": "Liver Function Tests Interpretation",
+    "category": "gastroenterology",
+    "content": "Key liver markers: ALT (SGPT, normal 7-56 U/L), AST (SGOT, normal 10-40 U/L), ALP (44-147 U/L), bilirubin (0.1-1.2 mg/dL), albumin (3.5-5.0 g/dL). Elevated ALT/AST: hepatocellular damage (hepatitis, fatty liver, drug toxicity). ALT >AST suggests non-alcoholic cause; AST >ALT (2:1) suggests alcoholic liver disease. Elevated ALP + bilirubin: cholestatic pattern (bile duct obstruction, cholangitis). Low albumin: chronic liver disease, malnutrition. Elevated bilirubin: jaundice visible at >2.5 mg/dL. Further workup: hepatitis panel, ultrasound, fibroscan.",
+    "source": "ACG Clinical Guidelines for Liver Disease, 2023"
+  },
+  {
+    "topic": "Complete Blood Count (CBC) Interpretation",
+    "category": "laboratory",
+    "content": "Normal CBC values: WBC 4,500-11,000/μL, RBC 4.5-5.5M/μL (men) 4.0-5.0M (women), Hemoglobin 14-18 g/dL (men) 12-16 g/dL (women), Hematocrit 40-54% (men) 36-48% (women), Platelets 150,000-400,000/μL, MCV 80-100 fL. Low WBC (leukopenia): viral infection, bone marrow suppression, autoimmune. High WBC (leukocytosis): bacterial infection, inflammation, leukemia. Low Hb: anemia (iron deficiency if MCV low, B12/folate if MCV high). Low platelets: ITP, DIC, liver disease. High platelets: reactive (infection, inflammation) or myeloproliferative disorder.",
+    "source": "Williams Hematology, 10th Edition"
+  },
+  {
+    "topic": "Back Pain Assessment",
+    "category": "orthopedic",
+    "content": "Acute low back pain: most cases are mechanical (muscle strain, ligament sprain) — resolves in 4-6 weeks. Red flags requiring urgent evaluation: age >50 or <20, fever, unexplained weight loss, bowel/bladder dysfunction (cauda equina syndrome — surgical emergency), progressive neurological deficit, history of cancer, IV drug use, trauma. Lumbar radiculopathy (sciatica): pain radiating below knee, positive straight leg raise. Treatment: stay active (bed rest worsens outcomes), NSAIDs, acetaminophen, muscle relaxants short-term. Physical therapy for chronic (>12 weeks). MRI only if red flags or failure to improve in 6 weeks.",
+    "source": "ACP/APS Low Back Pain Guidelines, 2023"
+  },
+  {
+    "topic": "Thyroid Function Tests",
+    "category": "laboratory",
+    "content": "TSH (0.4-4.0 mIU/L) is the primary screening test. High TSH + low Free T4 = primary hypothyroidism. Low TSH + high Free T4 = hyperthyroidism. High TSH + normal Free T4 = subclinical hypothyroidism. Anti-TPO antibodies: positive in Hashimoto's thyroiditis (autoimmune hypothyroidism). Anti-TSH receptor antibodies: positive in Graves' disease. Free T3 elevated disproportionately in early hyperthyroidism. Thyroglobulin: tumor marker for thyroid cancer follow-up. Subclinical hypothyroidism (TSH 4-10): treat if symptomatic, pregnant, or Anti-TPO positive.",
+    "source": "American Thyroid Association Guidelines, 2024"
+  },
+  {
+    "topic": "Dehydration Assessment",
+    "category": "general",
+    "content": "Mild dehydration (1-3% body weight loss): thirst, dry mouth, dark yellow urine, mild fatigue. Moderate (3-6%): decreased skin turgor, dry mucous membranes, tachycardia, reduced urine output. Severe (>6%): hypotension, shock, altered consciousness, no urine output. Causes: vomiting, diarrhea, excessive sweating, inadequate intake, diabetes (polyuria). Treatment: mild — oral rehydration (ORS or water with electrolytes). Moderate-severe — IV normal saline or Ringer's lactate. Monitor urine output (target >0.5 mL/kg/hr). Special populations: elderly and children dehydrate faster.",
+    "source": "WHO Oral Rehydration Guidelines, 2023"
+  },
+  {
+    "topic": "Skin Rash Differential Diagnosis",
+    "category": "dermatology",
+    "content": "Common rash patterns: Maculopapular (viral exanthem, drug reaction, measles). Vesicular/bullous (herpes, varicella, contact dermatitis). Urticarial (allergic reaction, hives). Petechial/purpura (meningococcemia — emergency, thrombocytopenia, vasculitis). Scaling (psoriasis, eczema, fungal infection). Key questions: onset timing, distribution, associated symptoms (fever, itching), medication changes, exposures. Red flags: petechiae + fever (meningococcemia), widespread blistering (Stevens-Johnson syndrome/TEN), expanding bull's-eye (Lyme disease). Photos help remote assessment.",
+    "source": "Fitzpatrick's Dermatology in General Medicine, 9th Edition"
+  },
+  {
+    "topic": "Diabetes Emergency - DKA and Hypoglycemia",
+    "category": "emergency",
+    "content": "Diabetic Ketoacidosis (DKA): blood glucose >250, ketones positive, pH <7.30, bicarbonate <18. Symptoms: nausea, vomiting, abdominal pain, fruity breath, Kussmaul breathing, altered consciousness. Treatment: IV insulin drip, aggressive IV fluids (NS), potassium replacement, monitor every 1-2 hours. Hypoglycemia: glucose <70 mg/dL. Symptoms: tremor, sweating, palpitations, confusion, seizures. Treatment: conscious — 15g fast carbs (glucose tablets, juice), recheck in 15 min. Unconscious — glucagon 1mg IM or IV dextrose. Both are medical emergencies requiring immediate intervention.",
+    "source": "ADA Diabetes Emergency Management, 2024"
+  },
+  {
+    "topic": "PTSD and Trauma",
+    "category": "mental_health",
+    "content": "PTSD develops after exposure to traumatic event. Diagnostic criteria (DSM-5): intrusion symptoms (flashbacks, nightmares), avoidance of trauma reminders, negative mood/cognition changes, arousal/reactivity changes (hypervigilance, insomnia, irritability), duration >1 month, significant distress. First-line treatment: trauma-focused CBT, prolonged exposure therapy, EMDR. Medications: sertraline or paroxetine (FDA-approved for PTSD). Prazosin for PTSD-related nightmares. Avoid benzodiazepines (worsen outcomes). Crisis resources: Veterans Crisis Line 988 (press 1), Crisis Text Line text HOME to 741741.",
+    "source": "APA PTSD Treatment Guidelines, 2023"
+  },
+  {
+    "topic": "Gastroenteritis and Food Poisoning",
+    "category": "gastroenterology",
+    "content": "Acute gastroenteritis: vomiting, diarrhea, abdominal cramps, fever. Viral (norovirus, rotavirus) most common — self-limiting 1-3 days. Bacterial (Salmonella, E. coli, Campylobacter): bloody diarrhea, higher fever, longer duration. Treatment: oral rehydration is primary treatment. BRAT diet (bananas, rice, applesauce, toast) during recovery. Antidiarrheals (loperamide) for non-bloody diarrhea only. Seek medical care if: bloody stool, fever >102°F, dehydration signs, symptoms >3 days, immunocompromised. Stool culture if bloody diarrhea or prolonged illness.",
+    "source": "ACG Gastroenteritis Management Guidelines, 2023"
+  },
+  {
+    "topic": "Vitamin B12 Deficiency",
+    "category": "nutrition",
+    "content": "Normal B12: 200-900 pg/mL. Deficiency <200 pg/mL. Causes: pernicious anemia (intrinsic factor deficiency), vegetarian/vegan diet, metformin use, malabsorption (celiac, Crohn's). Symptoms: macrocytic anemia (high MCV), fatigue, glossitis, paresthesias (tingling in hands/feet), cognitive changes, balance problems. Neurological damage can be irreversible if untreated >6 months. Treatment: IM cyanocobalamin 1000 mcg daily x7 days, then weekly x4 weeks, then monthly. Oral B12 2000 mcg daily for dietary deficiency. Monitor with CBC and reticulocyte count.",
+    "source": "British Society for Haematology B12 Guidelines, 2023"
+  },
+  {
+    "topic": "Arthritis Types and Management",
+    "category": "orthopedic",
+    "content": "Osteoarthritis (OA): degenerative, affects weight-bearing joints, worse with activity, better with rest, bone spurs on X-ray. Treatment: exercise, weight loss, acetaminophen/NSAIDs, topical diclofenac, joint replacement if severe. Rheumatoid arthritis (RA): autoimmune, symmetric small joint involvement, morning stiffness >1 hour, elevated RF and anti-CCP. Treatment: DMARDs (methotrexate first-line), biologics (TNF inhibitors). Gout: acute monoarthritis (big toe), uric acid >7 mg/dL, needle-shaped crystals on joint aspiration. Acute: colchicine/NSAIDs/steroids. Chronic: allopurinol/febuxostat.",
+    "source": "ACR/EULAR Arthritis Management Guidelines, 2023"
+  },
+  {
+    "topic": "Seizure First Aid and Epilepsy",
+    "category": "neurology",
+    "content": "First seizure evaluation: CT/MRI brain, EEG, basic labs (glucose, electrolytes, toxicology). Epilepsy: ≥2 unprovoked seizures >24h apart. Generalized tonic-clonic: loss of consciousness, stiffening, jerking. Absence: brief staring spells. Focal: one body region, may preserve consciousness. FIRST AID: protect from injury, turn on side, do NOT put anything in mouth, time the seizure. Call 911 if: first seizure, lasts >5 minutes, no recovery after, injury, in water, pregnant. Medications: levetiracetam, lamotrigine, valproate (avoid in pregnancy). Status epilepticus (>5 min): IV benzodiazepines urgently.",
+    "source": "AAN/AES Epilepsy Guidelines, 2023"
+  },
+  {
+    "topic": "DVT and Pulmonary Embolism",
+    "category": "cardiovascular",
+    "content": "Deep vein thrombosis (DVT): unilateral leg swelling, pain, warmth, redness. Risk factors: immobility, surgery, cancer, oral contraceptives, long flights. Diagnosis: D-dimer (if negative, rules out DVT), compression ultrasound. Pulmonary embolism (PE): sudden dyspnea, pleuritic chest pain, tachycardia, hemoptysis. Massive PE: hypotension, shock. Diagnosis: CT pulmonary angiography. Treatment: anticoagulation — heparin bridge to warfarin or direct oral anticoagulants (DOACs: rivaroxaban, apixaban). Duration: 3-6 months, longer if unprovoked. IVC filter if anticoagulation contraindicated.",
+    "source": "ASH DVT/PE Treatment Guidelines, 2023"
+  },
+  {
+    "topic": "Bipolar Disorder",
+    "category": "mental_health",
+    "content": "Bipolar I: manic episodes (elevated mood, grandiosity, decreased sleep, pressured speech, risky behavior) lasting ≥1 week. Bipolar II: hypomanic + depressive episodes. Mania requires hospitalization if severe (psychosis, danger to self/others). First-line mood stabilizers: lithium (monitor levels, thyroid, renal), valproate, lamotrigine (depressive episodes). Atypical antipsychotics: quetiapine, olanzapine. Antidepressants alone can trigger mania — always pair with mood stabilizer. Maintenance treatment is lifelong. Psychoeducation and regular sleep schedule are essential.",
+    "source": "CANMAT/ISBD Bipolar Treatment Guidelines, 2024"
+  },
+  {
+    "topic": "Pneumothorax",
+    "category": "emergency",
+    "content": "Pneumothorax: air in pleural space causing lung collapse. Spontaneous: tall thin males, smoking. Traumatic: chest injury. Tension pneumothorax: life-threatening — tracheal deviation, absent breath sounds, hypotension. IMMEDIATE treatment: needle decompression (2nd intercostal space, midclavicular line) then chest tube. Simple pneumothorax <20%: observation, supplemental oxygen. >20% or symptomatic: chest tube drainage. Symptoms: sudden sharp chest pain, shortness of breath, tachycardia. Chest X-ray shows visible pleural line. Recurrence rate 30% — consider pleurodesis for recurrent cases.",
+    "source": "ACCP Pneumothorax Management Guidelines, 2023"
+  },
+  {
+    "topic": "Dizziness and Vertigo",
+    "category": "neurology",
+    "content": "Vertigo (room spinning) vs lightheadedness vs presyncope vs disequilibrium. BPPV (benign paroxysmal positional vertigo): brief episodes triggered by head position changes, positive Dix-Hallpike test. Treatment: Epley maneuver (90% effective). Vestibular neuritis: acute severe vertigo lasting days, no hearing loss. Treatment: vestibular rehabilitation, short-term meclizine. Meniere's disease: episodic vertigo + hearing loss + tinnitus + ear fullness. Central vertigo red flags: vertical nystagmus, skew deviation, acute severe headache, focal neurological deficits — MRI urgently to rule out stroke.",
+    "source": "AAN Vestibular Disorders Practice Guidelines, 2023"
+  },
+  {
+    "topic": "Sickle Cell Disease",
+    "category": "blood_disorders",
+    "content": "Sickle cell disease: inherited hemoglobinopathy (HbSS). Vaso-occlusive crisis: severe pain (bones, chest, abdomen) due to sickling. Treatment: IV fluids, opioids for pain, oxygen if hypoxic. Acute chest syndrome: new pulmonary infiltrate + fever/chest pain — treat with antibiotics, exchange transfusion. Stroke risk: transcranial Doppler screening annually. Disease-modifying: hydroxyurea (increases HbF), L-glutamine, voxelotor, crizanlizumab. Chronic complications: avascular necrosis, renal disease, pulmonary hypertension. Genetic counseling for carriers.",
+    "source": "ASH Sickle Cell Disease Guidelines, 2023"
+  },
+  {
+    "topic": "Drug Allergy and Adverse Reactions",
+    "category": "pharmacology",
+    "content": "Drug allergy vs side effect vs intolerance. IgE-mediated (immediate, within 1 hour): urticaria, angioedema, anaphylaxis. Common culprits: penicillins, NSAIDs, sulfonamides. T-cell mediated (delayed, days-weeks): maculopapular rash, Stevens-Johnson syndrome, DRESS syndrome. SJS/TEN: mucocutaneous blistering >30% BSA — dermatology emergency (30% mortality). Key: document exact reaction, cross-reactivity patterns (penicillin-cephalosporin <2%), desensitization protocols available for essential drugs. Never rechallenge with a drug that caused anaphylaxis or SJS/TEN.",
+    "source": "AAAAI Drug Allergy Practice Parameters, 2023"
+  },
+  {
+    "topic": "Abdominal Pain Differential",
+    "category": "gastroenterology",
+    "content": "Location-based differential: RUQ — gallstones, hepatitis, cholecystitis. Epigastric — GERD, peptic ulcer, pancreatitis. LUQ — splenic pathology, gastric ulcer. RLQ — appendicitis (McBurney's point tenderness, rebound), ovarian pathology. LLQ — diverticulitis, sigmoid pathology. Diffuse — gastroenteritis, mesenteric ischemia, bowel obstruction, peritonitis. Red flags: rigid abdomen (peritonitis), fever + localized pain, vomiting blood, black tarry stools, severe sudden onset (perforation/rupture). Labs: CBC, CMP, lipase, UA, pregnancy test. Imaging: CT abdomen with contrast.",
+    "source": "ACR Appropriateness Criteria for Abdominal Pain, 2023"
+  },
+  {
+    "topic": "Sleep Disorders",
+    "category": "neurology",
+    "content": "Insomnia: difficulty falling/staying asleep ≥3 nights/week for ≥3 months. First-line treatment: CBT for insomnia (CBT-I), not medications. Sleep hygiene: consistent schedule, dark/cool room, no screens 1hr before bed, no caffeine after noon, limit alcohol. Medications (short-term): zolpidem, suvorexant, trazodone. Obstructive sleep apnea (OSA): snoring, witnessed apneas, daytime sleepiness. Diagnosis: polysomnography (AHI ≥5). Treatment: CPAP, weight loss, positional therapy. Untreated OSA increases risk of hypertension, stroke, MI, accidents.",
+    "source": "AASM Sleep Disorder Guidelines, 2023"
+  },
+  {
+    "topic": "Pregnancy Warning Signs",
+    "category": "obstetrics",
+    "content": "Normal pregnancy symptoms: nausea, fatigue, breast tenderness, frequent urination. Warning signs requiring IMMEDIATE medical attention: vaginal bleeding (miscarriage, placenta previa), severe headache + vision changes + swelling (preeclampsia), sudden severe abdominal pain (ectopic pregnancy, placental abruption), decreased fetal movement (<10 kicks in 2 hours), gush of fluid (premature rupture of membranes), fever >100.4°F, burning urination (UTI can cause preterm labor). Preeclampsia criteria: BP >140/90 + proteinuria after 20 weeks — can progress to eclampsia (seizures). HELLP syndrome: hemolysis, elevated liver enzymes, low platelets.",
+    "source": "ACOG Practice Guidelines, 2024"
+  },
+  {
+    "topic": "Eating Disorders",
+    "category": "mental_health",
+    "content": "Anorexia nervosa: BMI <18.5 with fear of weight gain, body image distortion, food restriction. Medical complications: bradycardia, amenorrhea, osteoporosis, electrolyte imbalances (fatal arrhythmias with hypokalemia), refeeding syndrome. Bulimia nervosa: binge eating + compensatory behaviors (purging, laxatives, excessive exercise). Complications: dental erosion, Russell's sign (knuckle calluses), metabolic alkalosis. Binge eating disorder: recurrent binges without compensatory behaviors. Treatment for all: multidisciplinary — psychiatrist, psychologist (CBT, FBT for adolescents), nutritionist. Hospitalize if medically unstable.",
+    "source": "APA Eating Disorders Practice Guidelines, 2023"
+  },
+  {
+    "topic": "OCD",
+    "category": "mental_health",
+    "content": "Obsessive-compulsive disorder: recurrent intrusive thoughts (obsessions) and repetitive behaviors/mental acts (compulsions) that are time-consuming (≥1 hour/day) and cause significant distress. Common types: contamination/washing, symmetry/ordering, harm/checking, forbidden thoughts. First-line treatment: CBT with Exposure and Response Prevention (ERP) — gold standard. Medications: high-dose SSRIs (fluoxetine 40-80mg, fluvoxamine). Augmentation: low-dose antipsychotic (aripiprazole) if partial response. Treatment duration: minimum 1-2 years. Y-BOCS scale for severity monitoring. Not same as OCPD (personality trait).",
+    "source": "APA OCD Treatment Guidelines, 2023"
+  },
+  {
+    "topic": "When to Go to the Emergency Room",
+    "category": "emergency",
+    "content": "Go to ER immediately for: chest pain or pressure, signs of stroke (FAST), difficulty breathing, severe allergic reaction, uncontrolled bleeding, loss of consciousness, seizure (first-time), severe abdominal pain, high fever with stiff neck (meningitis), suicidal thoughts with plan, severe head injury, poisoning/overdose, severe burns, compound fractures. Go to urgent care (not ER) for: minor cuts/burns, sprains, UTI symptoms, mild allergic reactions, ear/sinus infections, mild asthma exacerbation. Call primary doctor for: chronic condition management, medication refills, non-urgent lab results, preventive care.",
+    "source": "ACEP Emergency Department Guidelines, 2024"
+  },
+  {
+    "topic": "ADHD",
+    "category": "mental_health",
+    "content": "ADHD: persistent pattern of inattention and/or hyperactivity-impulsivity that interferes with functioning. Presentations: predominantly inattentive, predominantly hyperactive-impulsive, combined. Diagnosis requires symptoms in ≥2 settings, onset before age 12, lasting ≥6 months. Assessment tools: Conners Rating Scales, ASRS (Adult ADHD Self-Report). First-line treatment: stimulants (methylphenidate, amphetamine salts) — 70-80% response rate. Non-stimulant alternatives: atomoxetine, guanfacine. Behavioral therapy especially important for children. Adults benefit from organizational coaching, CBT. Monitor growth, BP, heart rate on stimulants.",
+    "source": "AAP/AACAP ADHD Clinical Practice Guidelines, 2023"
+  },
+  {
+    "topic": "Kidney Disease and CKD",
+    "category": "nephrology",
+    "content": "Chronic kidney disease (CKD) staging by GFR: Stage 1 (≥90, with markers), Stage 2 (60-89), Stage 3a (45-59), Stage 3b (30-44), Stage 4 (15-29), Stage 5 (<15, dialysis). Key markers: elevated creatinine, decreased GFR, proteinuria (UACR >30 mg/g). Most common causes: diabetes and hypertension. Complications: anemia (erythropoietin deficiency), hyperkalemia, metabolic acidosis, mineral bone disease, fluid overload. Management: BP control (<130/80), ACEi/ARB for proteinuria, glycemic control, low-sodium diet, avoid nephrotoxins (NSAIDs, contrast dye). Refer to nephrology at Stage 4.",
+    "source": "KDIGO CKD Guidelines, 2024"
+  },
+  {
+    "topic": "Cholesterol and Lipid Panel",
+    "category": "cardiovascular",
+    "content": "Normal lipid values: total cholesterol <200, LDL <100 (optimal), HDL >40 (men) >50 (women), triglycerides <150. LDL targets: very high risk <55 (statin + ezetimibe), high risk <70, moderate risk <100. First-line: high-intensity statin (atorvastatin 40-80mg or rosuvastatin 20-40mg). If statin-intolerant: ezetimibe, bempedoic acid, PCSK9 inhibitors. Lifestyle: Mediterranean diet, increase fiber, reduce saturated fat, exercise 150 min/week, weight loss. Triglycerides >500: risk of pancreatitis — add fibrate or omega-3 (4g/day). Recheck lipids in 6-12 weeks after starting therapy.",
+    "source": "ACC/AHA Cholesterol Management Guidelines, 2023"
+  },
+  {
+    "topic": "Burns Assessment and Treatment",
+    "category": "emergency",
+    "content": "Burn depth: first-degree (epidermis only, red, painful — like sunburn), second-degree (blistering, very painful), third-degree (full thickness, white/charred, painless). Rule of Nines for BSA estimation. Minor burns (<10% BSA, second-degree): cool running water 20 minutes (NOT ice), aloe vera, non-stick dressing, acetaminophen/ibuprofen. Seek ER for: burns >10% BSA, third-degree, face/hands/feet/genitals, circumferential, chemical, electrical, inhalation. Fluid resuscitation for major burns: Parkland formula (4mL × kg × %BSA/24h). Tetanus prophylaxis if not up to date.",
+    "source": "ABA Burn Management Guidelines, 2023"
+  },
+  {
+    "topic": "Iron Studies Interpretation",
+    "category": "laboratory",
+    "content": "Iron studies panel: serum iron (60-170 μg/dL), TIBC (250-370 μg/dL), transferrin saturation (20-50%), ferritin (12-150 ng/mL women, 12-300 ng/mL men). Iron deficiency anemia: low ferritin (<12), low iron, high TIBC, low transferrin saturation. Anemia of chronic disease: low iron, low TIBC, normal/high ferritin. Iron overload (hemochromatosis): high ferritin (>300 men, >200 women), high transferrin saturation (>45%). Ferritin is also acute phase reactant — can be falsely elevated with inflammation. Consider soluble transferrin receptor if ferritin unreliable.",
+    "source": "ASH Iron Deficiency Anemia Guidelines, 2023"
+  }
+]

@@ -8,6 +8,8 @@ from agents.disease_predictor import disease_prediction_node
 from agents.risk_assessor import risk_assessment_node
 from agents.medical_advisor import medical_advice_node
 from agents.report_analyzer import report_analysis_node
+from agents.diagnostic_interviewer import diagnostic_interview_node, needs_followup
+from agents.guardrails import validate_input, sanitize_input
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -157,12 +159,26 @@ def supervisor_node(state: HealthAgentState) -> dict:
             "intent": "ERROR"
         }
 
+    # ── Guardrails: validate input before processing ──────────────────────
+    is_valid, error_msg = validate_input(user_input)
+    if not is_valid:
+        print(f"[Supervisor] Input rejected by guardrails: {error_msg}")
+        return {
+            "error": True,
+            "error_message": error_msg,
+            "intent": "ERROR"
+        }
+
+    # Sanitize the input
+    user_input = sanitize_input(user_input)
+
     intent = classify_intent(user_input, has_report)
     print(f"[Supervisor] Detected intent: {intent}")
 
     return {
         "error": False,
         "intent": intent,
+        "user_input": user_input,
         "raw_symptoms": None,
         "normalized_symptoms": None,
         "predicted_conditions": None,
@@ -381,6 +397,11 @@ def route_after_extraction(state: HealthAgentState) -> str:
     if error or not has_symptoms:
         return "end_with_error"
 
+    # ── Check if diagnostic interview is needed ───────────────────────────
+    if needs_followup(state):
+        print("[Router] Symptoms vague → routing to diagnostic interview")
+        return "diagnostic_interview"
+
     return "normalize_symptoms"
 
 
@@ -407,16 +428,17 @@ def end_with_error_node(state: HealthAgentState) -> dict:
 def build_health_graph():
     graph = StateGraph(HealthAgentState)
 
-    graph.add_node("supervisor",         supervisor_node)
-    graph.add_node("analyze_report",     report_analysis_node)
-    graph.add_node("answer_query",       answer_query_node)
-    graph.add_node("extract_symptoms",   symptom_extraction_node)
-    graph.add_node("normalize_symptoms", symptom_normalization_node)
-    graph.add_node("predict_disease",    disease_prediction_node)
-    graph.add_node("assess_risk",        risk_assessment_node)
-    graph.add_node("generate_advice",    medical_advice_node)
-    graph.add_node("emergency_response", emergency_response_node)
-    graph.add_node("end_with_error",     end_with_error_node)
+    graph.add_node("supervisor",            supervisor_node)
+    graph.add_node("analyze_report",        report_analysis_node)
+    graph.add_node("answer_query",          answer_query_node)
+    graph.add_node("extract_symptoms",      symptom_extraction_node)
+    graph.add_node("normalize_symptoms",    symptom_normalization_node)
+    graph.add_node("predict_disease",       disease_prediction_node)
+    graph.add_node("assess_risk",           risk_assessment_node)
+    graph.add_node("generate_advice",       medical_advice_node)
+    graph.add_node("emergency_response",    emergency_response_node)
+    graph.add_node("end_with_error",        end_with_error_node)
+    graph.add_node("diagnostic_interview",  diagnostic_interview_node)
 
     graph.add_edge(START, "supervisor")
 
@@ -442,10 +464,14 @@ def build_health_graph():
     graph.add_conditional_edges(
         "extract_symptoms", route_after_extraction,
         {
-            "end_with_error":     "end_with_error",
-            "normalize_symptoms": "normalize_symptoms"
+            "end_with_error":        "end_with_error",
+            "normalize_symptoms":    "normalize_symptoms",
+            "diagnostic_interview":  "diagnostic_interview"
         }
     )
+
+    # Diagnostic interview always ends (returns questions to user)
+    graph.add_edge("diagnostic_interview", END)
 
     graph.add_edge("end_with_error",     END)
     graph.add_edge("normalize_symptoms", "predict_disease")

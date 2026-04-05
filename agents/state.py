@@ -34,11 +34,19 @@ class HealthAgentState(TypedDict):
     predicted_conditions: Optional[list[dict]]
     risk_assessment:      Optional[dict]
 
+    # ── ML predictions ────────────────────────────────────────────────────────
+    ml_predictions: Optional[list[dict]]  # predictions from RandomForest model
+
     # ── Final output ──────────────────────────────────────────────────────────
     final_response: Optional[str]
 
     # ── Conversation memory for follow-up context ───────────────────────────
     chat_history: Optional[list[dict]]
+
+    # ── Diagnostic interview (multi-turn) ─────────────────────────────────
+    enable_diagnostic_interview: Optional[bool]   # toggle from sidebar
+    diagnostic_phase: Optional[str]               # "COLLECTING" | "COMPLETE" | None
+    question_count:   Optional[int]               # follow-up rounds asked (max 3)
 
     # ── Error handling ────────────────────────────────────────────────────────
     error:         Optional[bool]
