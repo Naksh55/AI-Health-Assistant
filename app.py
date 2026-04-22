@@ -9,13 +9,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import os
+import streamlit as st
+
+# Use st.secrets for Cloud, fallback to os.getenv for local
 os.environ["LANGSMITH_TRACING"]  = "true"
 os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGSMITH_API_KEY"]  = os.getenv("LANGSMITH_API_KEY", "")
+os.environ["LANGSMITH_API_KEY"]  = st.secrets.get("LANGSMITH_API_KEY", os.getenv("LANGSMITH_API_KEY", ""))
+os.environ["GROQ_API_KEY"]       = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY", ""))
 os.environ["LANGSMITH_PROJECT"]  = "AI Health Assistant"
 
 import base64, io, re
-import streamlit as st
 import PyPDF2
 from agents.graph import health_graph
 
@@ -117,12 +120,14 @@ section[data-testid="stSidebar"] > div {
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) [data-testid="stChatMessageContent"] {
     background: linear-gradient(135deg, #0d9488, #0891b2) !important;
-    border: none !important;
+    color: white !important;
     border-radius: 13px 2px 13px 13px !important;
     padding: 12px 16px !important;
-    box-shadow: 0 3px 14px rgba(13,148,136,0.28) !important;
-    max-width: 60% !important;
-    margin-left: auto !important;
+    max-width: 75% !important;
+}
+/* Ensure the text inside is white */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p {
+    color: white !important;
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p,
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) span {
@@ -240,7 +245,7 @@ section[data-testid="stSidebar"] button:not([data-testid="baseButton-primary"]) 
 }
 section[data-testid="stSidebar"] button:hover {
     background: #ecfdf5 !important;
-    border-color: #059669 !important;stV
+    border-color: #059669 !important;
     color: #065f46 !important;
 }
 </style>
@@ -330,8 +335,11 @@ section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
     gap: 1rem !important;   /* 👈 bigger spacing between blocks */
 }
 [data-testid="stFileUploader"] {
-    margin-top: 8px !important;
-    margin-bottom: 8px !important;
+    padding-top: 10px;
+}
+/* This hides the redundant 'Browse files' label if it's squashed */
+[data-testid="stFileUploader"] section > label {
+    display: none !important;
 }
 .stat-card { background:#f2fbf7; border:1px solid #d0e8df; border-radius:8px; padding:10px 12px; }
 .stat-row  { display:flex; justify-content:space-between; align-items:center; padding:3px 0; }
@@ -352,7 +360,9 @@ section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
     transition:box-shadow .18s;
     position: relative !important;   /* 👈 prevents stacking issues */
     z-index: 1;
-    flex: 1 !important;
+    display: flex !important;      
+    flex-direction: column !important; 
+    height: 100% !important;       
 }
 [data-testid="stVerticalBlock"] > div {
     display: block !important;
