@@ -15,3 +15,9 @@ venv/
 # IDE
 .vscode/
 .idea/
+
+# Ignore model + database files
+*.pkl
+*.bin
+*.sqlite3
+knowledge/chroma_db/
