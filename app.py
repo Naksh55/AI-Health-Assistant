@@ -146,6 +146,7 @@ section[data-testid="stSidebar"] > div {
 [data-testid="stChatInput"] textarea {
     background: #ffffff !important;
     color: #1a2e25 !important;
+    caret-color: #1a2e25 !important;
     font-family: 'Inter', sans-serif !important;
     font-size: 0.9rem !important;
 }
@@ -227,8 +228,7 @@ section[data-testid="stSidebar"] > div {
 
 /* ── Global override: Browse files button in sidebar uploader ── */
 /* Streamlit renders this as a plain <button> with no testid, catch it broadly */
-/* Sidebar buttons — only target real buttons, NOT the toggle switch */
-section[data-testid="stSidebar"] button:not([data-testid="baseButton-primary"]):not([role="switch"]) {
+section[data-testid="stSidebar"] button:not([data-testid="baseButton-primary"]) {
     background: #ffffff !important;
     border: 1.5px solid #10b981 !important;
     color: #047857 !important;
@@ -238,33 +238,10 @@ section[data-testid="stSidebar"] button:not([data-testid="baseButton-primary"]):
     border-radius: 7px !important;
     box-shadow: none !important;
 }
-section[data-testid="stSidebar"] button:not([role="switch"]):hover {
+section[data-testid="stSidebar"] button:hover {
     background: #ecfdf5 !important;
-    border-color: #059669 !important;
+    border-color: #059669 !important;stV
     color: #065f46 !important;
-}
-/* Restore the toggle switch pill appearance */
-section[data-testid="stSidebar"] button[role="switch"] {
-    background: #d1d5db !important;
-    border: none !important;
-    border-radius: 20px !important;
-    width: 44px !important;
-    height: 24px !important;
-    min-width: 44px !important;
-    padding: 2px !important;
-    margin: 0 !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2) !important;
-    cursor: pointer !important;
-}
-section[data-testid="stSidebar"] button[role="switch"]:hover {
-    background: #9ca3af !important;
-    border: none !important;
-}
-section[data-testid="stSidebar"] button[role="switch"][aria-checked="true"] {
-    background: #10b981 !important;
-}
-section[data-testid="stSidebar"] button[role="switch"][aria-checked="true"]:hover {
-    background: #059669 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -487,86 +464,38 @@ div[data-testid="stChatMessageContent"][aria-label="Chat message from user"] p {
 .w-chips { display:flex; flex-wrap:wrap; gap:6px; }
 .w-chip  { background:#ecfdf5; border:1px solid #6ee7b7; border-radius:6px; padding:5px 11px; font-size:.74rem; color:#047857; font-weight:500; }
 
-/* ── Prominent toggle styling ── */
-/* Force toggle to be VISIBLE — move switch to RIGHT of text */
-section[data-testid="stSidebar"] [data-testid="stToggle"],
-section[data-testid="stSidebar"] .stToggle {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-/* Flip layout: text LEFT, switch RIGHT */
-section[data-testid="stSidebar"] [data-testid="stToggle"] > label,
-section[data-testid="stSidebar"] .stToggle > label {
-    display: flex !important;
-    flex-direction: row-reverse !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    cursor: pointer !important;
-}
-/* Toggle track (OFF = dark gray pill) */
-section[data-testid="stSidebar"] .stToggle > label > span:first-child,
-section[data-testid="stSidebar"] .stToggle > label > div:first-child {
-    width: 48px !important;
-    height: 26px !important;
-    min-width: 48px !important;
-    flex-shrink: 0 !important;
-    background-color: #9ca3af !important;
-    border-radius: 13px !important;
-    border: 2px solid #6b7280 !important;
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    order: 2 !important;
-}
-/* Toggle thumb (white knob) */
-section[data-testid="stSidebar"] .stToggle > label > span:first-child > span,
-section[data-testid="stSidebar"] .stToggle > label > div:first-child > span,
-section[data-testid="stSidebar"] .stToggle > label > div:first-child > div {
-    width: 22px !important;
-    height: 22px !important;
-    background: #ffffff !important;
-    border-radius: 50% !important;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.35) !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-/* Toggle track when ON = bright green */
-section[data-testid="stSidebar"] .stToggle > label > span:first-child[data-checked="true"],
-section[data-testid="stSidebar"] .stToggle > label > div:first-child[data-checked="true"] {
-    background-color: #10b981 !important;
-    border-color: #059669 !important;
-}
-/* Label text — ensure clearly visible */
-section[data-testid="stSidebar"] .stToggle > label > span:last-child,
-section[data-testid="stSidebar"] .stToggle > label p,
-section[data-testid="stSidebar"] [data-testid="stToggle"] label p,
-section[data-testid="stSidebar"] [data-testid="stToggle"] span {
-    font-size: 0.84rem !important;
-    font-weight: 600 !important;
-    color: #1a2e25 !important;
-    font-family: 'Inter', sans-serif !important;
-    margin: 0 !important;
-    order: 1 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-/* Feature toggle container card */
-.feature-toggle-card {
+/* ── Custom feature card toggle styling ── */
+.feature-card {
     background: linear-gradient(135deg, #ecfdf5 0%, #e0f2fe 100%);
     border: 1.5px solid #6ee7b7;
     border-radius: 10px;
-    padding: 14px 16px;
-    margin: 4px 0;
+    padding: 12px 16px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
     transition: all 0.2s ease;
+    user-select: none;
 }
-.feature-toggle-card:hover {
-    border-color: #10b981;
-    box-shadow: 0 2px 12px rgba(16,185,129,0.15);
+.feature-card:hover { border-color: #10b981; box-shadow: 0 3px 12px rgba(16,185,129,0.2); }
+.feature-card-left { display:flex; flex-direction:column; gap:3px; }
+.feature-card-title { font-size:.82rem; font-weight:700; color:#065f46; font-family:"Inter",sans-serif; }
+.feature-card-desc  { font-size:.67rem; color:#7db59a; font-family:"Inter",sans-serif; line-height:1.3; }
+.toggle-pill {
+    width:44px; height:24px; border-radius:12px;
+    background:#d1d5db; border:2px solid #9ca3af;
+    position:relative; flex-shrink:0;
+    transition:background 0.25s, border-color 0.25s;
+    display:flex; align-items:center; padding:2px;
 }
+.toggle-pill.on  { background:#10b981; border-color:#059669; }
+.toggle-knob {
+    width:16px; height:16px; border-radius:50%;
+    background:white; box-shadow:0 1px 4px rgba(0,0,0,0.3);
+    transition:transform 0.25s ease; flex-shrink:0;
+}
+.toggle-pill.on .toggle-knob { transform:translateX(20px); }
 </style>
 """
 st.markdown(COMPONENT_CSS, unsafe_allow_html=True)
@@ -810,25 +739,41 @@ with st.sidebar:
             st.image(uploaded_file, width=320)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Features Section ─────────────────────────────────────────────────
-    st.markdown("""
-    <div style="padding:16px 18px 8px 18px; border-bottom:1px solid #e8f5ef;">
-        <div class="sb-lbl">Features</div>
-        <div style="font-size:.82rem; font-weight:600; color:#1a2e25; margin-bottom:3px;">
-            🩺 Diagnostic Interview
-        </div>
-        <div style="font-size:.69rem; color:#7db59a; line-height:1.4;">
-            Enables follow-up questions for vague symptoms before diagnosing
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # ── Diagnostic Interview Toggle (prominent, above Clear) ─────────────
+    # ── Features Section — Custom HTML toggle (fully visible) ──────────────
+    if "diagnostic_toggle" not in st.session_state:
+        st.session_state.diagnostic_toggle = False
 
-    diagnostic_enabled = st.toggle(
-        "Enable Diagnostic Interview",
-        value=False,
-        key="diagnostic_toggle",
-        help="When ON, DocMate asks clarifying questions before diagnosing."
-    )
+    is_on        = st.session_state.diagnostic_toggle
+    pill_class   = "toggle-pill on" if is_on else "toggle-pill"
+    status_text  = "ON" if is_on else "OFF"
+    status_color = "#059669" if is_on else "#9ca3af"
+
+    st.markdown("""
+    <div style="padding:14px 18px 4px 18px;border-top:1px solid #e8f5ef;">
+        <div class="sb-lbl">Features</div>
+    </div>""", unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div style="padding:4px 16px 4px 16px;">
+      <div class="feature-card">
+        <div class="feature-card-left">
+          <div class="feature-card-title">🩺 Diagnostic Interview</div>
+          <div class="feature-card-desc">Ask follow-up questions before diagnosing</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div class="{pill_class}"><div class="toggle-knob"></div></div>
+          <span style="font-size:.58rem;font-weight:700;color:{status_color};font-family:Inter,sans-serif;">{status_text}</span>
+        </div>
+      </div>
+    </div>""", unsafe_allow_html=True)
+
+    toggle_label = "Disable Diagnostic Interview" if is_on else "Enable Diagnostic Interview"
+    if st.button(toggle_label, key="diag_toggle_btn", use_container_width=True):
+        st.session_state.diagnostic_toggle = not st.session_state.diagnostic_toggle
+        st.rerun()
+
+    diagnostic_enabled = st.session_state.diagnostic_toggle
 
     st.markdown('<div class="sb-sec">', unsafe_allow_html=True)
     if st.button("Clear Conversation", use_container_width=True, key="clear_btn"):
