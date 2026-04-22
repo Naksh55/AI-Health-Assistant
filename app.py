@@ -12,11 +12,20 @@ import os
 import streamlit as st
 
 # Use st.secrets for Cloud, fallback to os.getenv for local
+# os.environ["LANGSMITH_TRACING"]  = "true"
+# os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
+# os.environ["LANGSMITH_API_KEY"]  = st.secrets.get("LANGSMITH_API_KEY", os.getenv("LANGSMITH_API_KEY", ""))
+# os.environ["GROQ_API_KEY"]       = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY", ""))
+# os.environ["LANGSMITH_PROJECT"]  = "AI Health Assistant"
+
 os.environ["LANGSMITH_TRACING"]  = "true"
+
 os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGSMITH_API_KEY"]  = st.secrets.get("LANGSMITH_API_KEY", os.getenv("LANGSMITH_API_KEY", ""))
-os.environ["GROQ_API_KEY"]       = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY", ""))
+
+os.environ["LANGSMITH_API_KEY"]  = os.getenv("LANGSMITH_API_KEY", "")
+
 os.environ["LANGSMITH_PROJECT"]  = "AI Health Assistant"
+
 
 import base64, io, re
 import PyPDF2
@@ -917,4 +926,3 @@ if user_input := st.chat_input("Describe your symptoms or ask about your report.
             }
             idx = len(st.session_state.messages)
             render_pipeline(meta, key=str(idx))
-            st.session_state.messages.append({"role": "assistant", "content": response_text, "meta": meta})
