@@ -518,21 +518,20 @@ div[data-testid="stChatMessageContent"][aria-label="Chat message from user"] p {
 }
 .toggle-pill.on .toggle-knob { transform:translateX(20px); }
 
-/* Hide original button text completely */
-section[data-testid="stSidebar"] 
+/* Target sidebar file uploader button safely */
 [data-testid="stFileUploader"] button {
     color: transparent !important;
-    position: relative;
+    position: relative !important;
 }
 
-/* Add custom label */
-section[data-testid="stSidebar"] 
+/* Add custom text centered */
 [data-testid="stFileUploader"] button::after {
-    content: "Upload Report";   /* Your custom text */
+    content: "Upload Report";
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #047857;
     font-weight: 600;
     font-size: 14px;
