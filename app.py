@@ -517,24 +517,20 @@ div[data-testid="stChatMessageContent"][aria-label="Chat message from user"] p {
     transition:transform 0.25s ease; flex-shrink:0;
 }
 .toggle-pill.on .toggle-knob { transform:translateX(20px); }
-
-/* Target sidebar file uploader button safely */
-[data-testid="stFileUploader"] button {
-    color: transparent !important;
-    position: relative !important;
+/* Hide original Browse files text completely */
+[data-testid="stFileUploader"] button span {
+    display: none !important;
 }
 
-/* Add custom text centered */
-[data-testid="stFileUploader"] button::after {
+/* Style button normally */
+[data-testid="stFileUploader"] button {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+/* Add your custom text */
+[data-testid="stFileUploader"] button::before {
     content: "Upload Report";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #047857;
-    font-weight: 600;
-    font-size: 14px;
 }
 
 </style>
