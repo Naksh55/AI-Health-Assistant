@@ -63,6 +63,8 @@ html, body,
     margin: 0 auto !important;
 }
 
+
+
 /* Kill dark bottom bar */
 [data-testid="stBottom"],
 [data-testid="stBottom"] > div,
@@ -515,6 +517,27 @@ div[data-testid="stChatMessageContent"][aria-label="Chat message from user"] p {
     transition:transform 0.25s ease; flex-shrink:0;
 }
 .toggle-pill.on .toggle-knob { transform:translateX(20px); }
+
+/* Hide original button text completely */
+section[data-testid="stSidebar"] 
+[data-testid="stFileUploader"] button {
+    color: transparent !important;
+    position: relative;
+}
+
+/* Add custom label */
+section[data-testid="stSidebar"] 
+[data-testid="stFileUploader"] button::after {
+    content: "Upload Report";   /* Your custom text */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #047857;
+    font-weight: 600;
+    font-size: 14px;
+}
+
 </style>
 """
 st.markdown(COMPONENT_CSS, unsafe_allow_html=True)
@@ -742,7 +765,7 @@ def render_pipeline(meta: dict, key: str):
 with st.sidebar:
     st.markdown("""
     <div class="sb-header">
-        <div class="sb-name">⚕️ &nbsp;HealthAI</div>
+        <div class="sb-name">⚕️ &nbspDocMate</div>
         <div class="sb-sub">Clinical Assistant · v1.0</div>
     </div>""", unsafe_allow_html=True)
 
