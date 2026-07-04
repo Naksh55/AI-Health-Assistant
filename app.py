@@ -29,7 +29,7 @@ os.environ["LANGSMITH_PROJECT"]  = "AI Health Assistant"
 
 import base64, io, re
 import PyPDF2
-from agents.graph import health_graph
+from agents.chat_runner import run_chat_turn
 
 st.set_page_config(
     page_title="DocMate · Clinical Assistant",
@@ -892,55 +892,68 @@ if user_input := st.chat_input("Describe your symptoms or ask about your report.
         with st.chat_message("user", avatar="👤"):
             st.markdown(display_msg)
 
-        with st.chat_message("assistant", avatar="⚕️"):
-            from groq import RateLimitError
+        try:
+            with st.chat_message("assistant", avatar="⚕️"):
+                # Build conversation context — last 6 messages for follow-up awareness
+                recent_history = st.session_state.messages[-6:] if st.session_state.messages else []
+                chat_history_for_graph = [
+                    {"role": m["role"], "content": m["content"]}
+                    for m in recent_history
+                ]
 
-            # Build conversation context — last 6 messages for follow-up awareness
-            recent_history = st.session_state.messages[-6:] if st.session_state.messages else []
-            chat_history_for_graph = [
-                {"role": m["role"], "content": m["content"]}
-                for m in recent_history
-            ]
+                with st.spinner("Analyzing..." if has_report else "Running pipeline..."):
+                    final_state = run_chat_turn(
+                        user_input=user_input,
+                        has_report=has_report,
+                        report_data=report_data,
+                        report_type=report_type,
+                        chat_history=chat_history_for_graph,
+                        enable_diagnostic_interview=st.session_state.get("diagnostic_toggle", False),
+                        question_count=st.session_state.question_count,
+                    )
 
-            with st.spinner("Analyzing..." if has_report else "Running pipeline..."):
-                try:
-                    final_state = health_graph.invoke({
-                        "user_input":   user_input,
-                        "has_report":   has_report,
-                        "report_data":  report_data,
-                        "report_type":  report_type,
-                        "chat_history": chat_history_for_graph,
-                        "error":        False,
-                        "enable_diagnostic_interview": st.session_state.get("diagnostic_toggle", False),
-                        "question_count": st.session_state.question_count,
-                    })
+                # Track diagnostic phase
+                diag_phase = final_state.get("diagnostic_phase")
+                if diag_phase == "COLLECTING":
+                    st.session_state.diagnostic_phase = "COLLECTING"
+                    st.session_state.question_count = final_state.get("question_count", 0)
+                else:
+                    st.session_state.diagnostic_phase = None
+                    st.session_state.question_count = 0
 
-                except RateLimitError:
-                    final_state = {
-                        "final_response": "⚠️ API rate limit reached. Please wait a moment and try again."
-                    }
+                response_text = final_state.get("final_response", "Something went wrong. Please try again.")
+                render_response(response_text)
 
-            # Track diagnostic phase
-            diag_phase = final_state.get("diagnostic_phase")
-            if diag_phase == "COLLECTING":
-                st.session_state.diagnostic_phase = "COLLECTING"
-                st.session_state.question_count = final_state.get("question_count", 0)
-            else:
-                st.session_state.diagnostic_phase = None
-                st.session_state.question_count = 0
+                meta = {
+                    "error":               final_state.get("error", False),
+                    "intent":              final_state.get("intent", "SYMPTOM_ANALYSIS"),
+                    "raw_symptoms":        final_state.get("raw_symptoms") or [],
+                    "normalized_symptoms": final_state.get("normalized_symptoms") or [],
+                    "conditions":          final_state.get("predicted_conditions") or [],
+                    "risk":                final_state.get("risk_assessment") or {},
+                    "report_analysis":     final_state.get("report_analysis"),
+                    "ml_predictions":      final_state.get("ml_predictions") or [],
+                }
+                idx = len(st.session_state.messages)
+                render_pipeline(meta, key=str(idx))
 
-            response_text = final_state.get("final_response", "Something went wrong. Please try again.")
-            render_response(response_text)
+                # Persist this assistant turn so it survives reruns
+                # (e.g. clicking "View Pipeline Analysis" triggers st.rerun())
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": response_text,
+                    "meta": meta,
+                })
+        except Exception as exc:
+            print(f"[Streamlit] Chat handler failed: {exc}")
+            with st.chat_message("assistant", avatar="⚕️"):
+                st.markdown(
+                    "I’m sorry — I couldn’t process your request right now. "
+                    "Please try again in a moment."
+                )
 
-            meta = {
-                "error":               final_state.get("error", False),
-                "intent":              final_state.get("intent", "SYMPTOM_ANALYSIS"),
-                "raw_symptoms":        final_state.get("raw_symptoms") or [],
-                "normalized_symptoms": final_state.get("normalized_symptoms") or [],
-                "conditions":          final_state.get("predicted_conditions") or [],
-                "risk":                final_state.get("risk_assessment") or {},
-                "report_analysis":     final_state.get("report_analysis"),
-                "ml_predictions":      final_state.get("ml_predictions") or [],
-            }
-            idx = len(st.session_state.messages)
-            render_pipeline(meta, key=str(idx))
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": "I’m sorry — I couldn’t process your request right now. Please try again in a moment.",
+                "meta": None,
+            })
